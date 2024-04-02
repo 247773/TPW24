@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data
+namespace Logic
 {
-    public abstract class DataAbstractAPI
+    public abstract class LogicAbstractAPI
     {
-        public static DataAbstractAPI CreateDataAPI()
+        public static LogicAbstractAPI CreateLogicAPI()
         {
-            return new DataAPI();
+            return new LogicAPI();
         }
-
     }
 }
