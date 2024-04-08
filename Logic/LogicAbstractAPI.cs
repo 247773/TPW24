@@ -12,5 +12,8 @@ namespace Logic
         {
             return new LogicAPI();
         }
+
+        public abstract void CreateTable(int length, int width, int numOfBalls, int radius);
+        public abstract List<Ball> GetBalls();
     }
 }
