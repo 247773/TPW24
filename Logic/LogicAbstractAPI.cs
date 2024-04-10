@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Data;
+
 namespace Logic
 {
     public abstract class LogicAbstractAPI
@@ -14,6 +16,7 @@ namespace Logic
         }
 
         public abstract void CreateTable(int length, int width, int numOfBalls, int radius);
+
         public abstract List<Ball> GetBalls();
     }
 }
