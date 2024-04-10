@@ -1,4 +1,6 @@
-﻿namespace Logic
+﻿using Ball = Data.Ball;
+
+namespace Logic
 {
     internal class LogicAPI : LogicAbstractAPI
     {

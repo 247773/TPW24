@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+using Ball = Data.Ball;
+
 namespace Logic
 {
     internal class Table
