@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,7 @@ namespace Logic
         private int _length;
         private int _width;
         private List<Ball> _balls;
+        private List<Task> _tasks;
 
 
         public Table(int length, int width)
@@ -21,6 +23,7 @@ namespace Logic
             this._length = length;
             this._width = width;
             this._balls = new List<Ball>();
+            this._tasks = new List<Task>();
         }
 
         public int Length
@@ -38,14 +41,31 @@ namespace Logic
             get { return _balls; }
         }
 
+        public List<Task> Tasks
+        {
+            get { return _tasks; }
+            set { _tasks = value; }
+        }
+
         public override void CreateBalls(int numOfBalls, int radius)
         {
             for (int i = 0; i < numOfBalls; i++)
             {
-                Random rand = new Random();
-                int x = rand.Next(radius, _length - radius);
-                int y = rand.Next(radius, _width - radius);
-                _balls.Add(new Ball(x, y, radius));
+                _tasks.Add(Task.Run(() =>
+                {
+                    Random rand = new Random();
+                    int x = rand.Next(radius, _length - radius);
+                    int y = rand.Next(radius, _width - radius);
+                    Ball newBall = new Ball(x, y, radius);
+                    _balls.Add(newBall);
+
+                    while (true)
+                    {
+                        newBall.RandomVelocity(-5, 5);
+                        newBall.Move();
+                        Thread.Sleep(10); // wstrzymanie wykonania biezacego watku na 10ms
+                    }
+                }));
             }
         }
 
@@ -66,6 +86,14 @@ namespace Logic
                 positions.Add((ball.X, ball.Y));
             }
             return positions;
+        }
+
+        public override void StartSimulation()
+        {
+            foreach (Task task in _tasks)
+            {
+                task.Start();
+            }
         }
     }
 }

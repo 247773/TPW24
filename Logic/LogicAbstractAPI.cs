@@ -18,5 +18,6 @@ namespace Logic
         public abstract void CreateBalls(int numOfBalls, int radius); //operacja interaktywna (twórz kule)
         public abstract void UpdateBalls();
         public abstract List<(int, int)> GetBallsPosition(); //operacja reaktywna (okresowe wysłanie położenia kul)
+        public abstract void StartSimulation();
     }
 }
