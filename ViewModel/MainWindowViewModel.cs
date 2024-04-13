@@ -15,7 +15,7 @@ namespace ViewModel
 
         private String _NumOfBalls = "";
 
-        private int _ballRadius = 10;
+        private int _ballRadius = 20;
 
         public String NumOfBalls
         {

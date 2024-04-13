@@ -80,13 +80,7 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Path Fill="#CC2936">
-                        <Path.Data>
-                            <EllipseGeometry
-                                RadiusX="{Binding Radius}"
-                                RadiusY="{Binding Radius}"/>
-                        </Path.Data>
-                    </Path>
+                    <Ellipse Width= "{Binding Radius}" Height="{Binding Radius}" Fill="DarkRed" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
