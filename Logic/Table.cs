@@ -30,9 +30,9 @@ namespace Logic
 
         public override void CreateBalls(int numOfBalls, int r)
         {
+            Random random = new Random();
             for (int i = 0; i < numOfBalls; i++)
             {
-                Random random = new Random();
                 int x = random.Next(r, _length - r);
                 int y = random.Next(r, _width - r);
                 IBall ball = IBall.CreateBall(x, y, r);

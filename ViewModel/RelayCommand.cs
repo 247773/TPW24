@@ -13,11 +13,9 @@ namespace ViewModel
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object? parameter) 
+        public bool CanExecute(object? parameter)
         {
-            if (_canExecute == null)
-                return true;
-            return _canExecute();
+            return _canExecute?.Invoke() ?? true;
         }
 
         public void Execute(object? parameter)

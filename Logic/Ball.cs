@@ -22,7 +22,7 @@ namespace Logic
         public override int R
         {
             get => _R;
-            set { _R = value; RaisePropertyChanged(); }
+            set { _R = value; }
         }
 
         public int _X { get; set; }
