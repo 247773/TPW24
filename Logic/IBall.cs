@@ -9,13 +9,18 @@ namespace Logic
 {
     public abstract class IBall
     {
-        public static IBall CreateBall(int x, int y, int r) => new Ball(x, y, r);
+        public static IBall CreateBall(int x, int y, int r)
+        {
+            return new Ball(x, y, r);
+        }
 
-        public abstract int _x { get; set; }
-        public abstract int _y { get; set; }
-        public abstract int _r { get; set; }
-        public abstract int _vx { get; set; }
-        public abstract int _vy { get; set; }
-        public abstract event PropertyChangedEventHandler? _propertyChanged;
+        public abstract int X { get; set; }
+        public abstract int Y { get; set; }
+        public abstract int R { get; set; }
+        public abstract void RandomVelocity(int min, int max);
+        public abstract void MoveBall();
+        public abstract bool CheckCollision(int BoardWidth, int BoardHeight);
+
+        public abstract event PropertyChangedEventHandler? PropertyChanged;
     }
 }

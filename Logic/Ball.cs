@@ -4,83 +4,71 @@ using System.Runtime.CompilerServices;
 
 namespace Logic
 {
-    public class Ball : IBall
+    internal class Ball : IBall, INotifyPropertyChanged
     {
-        public override event PropertyChangedEventHandler? _propertyChanged;
 
-        public Ball(int x, int y, int r)
+
+        public override event PropertyChangedEventHandler? PropertyChanged;
+        public override int X
         {
-            this._x = x;
-            this._y = y;
-            this._r = r;
+            get => _X;
+            set { _X = value; RaisePropertyChanged(); }
+        }
+        public override int Y
+        {
+            get => _Y;
+            set { _Y = value; RaisePropertyChanged(); }
         }
 
-        public override int _x
+        public override int R
         {
-            get => _x;
-            set 
-            { 
-                _x = value;
-                RaisePropertyChanged();
-            }
+            get => _R;
+            set { _R = value; RaisePropertyChanged(); }
         }
 
-        public override int _y
+        public int _X { get; set; }
+        public int _Y { get; set; }
+        public int _R { get; set; }
+        public int _Vx { get; set; }
+        public int _Vy { get; set; }
+
+        internal Ball(int x, int y, int r)
         {
-            get => _y;
-            set 
-            { 
-                _y = value;
-                RaisePropertyChanged();
-            }
+            this._X = x;
+            this._Y = y;
+            this._R = r;
         }
 
-        public override int _r
+        public override void MoveBall()
         {
-            get { return _r; }
-            set
-            {
-                _r = value;
-            }
+            X += _Vx;
+            Y += _Vy;
         }
 
-        public override int _vx
+        public override bool CheckCollision(int BoardWidth, int BoardHeight)
         {
-            get { return _vx; }
-            set { _vx = value; }
-        }
-
-        public override int _vy
-        {
-            get { return _vy; }
-            set { _vy = value; }
-        }
-
-        public void Move()
-        {
-            this._x += _vx;
-            this._y += _vy;
-        }
-
-        public void RandomVelocity(int vMin, int vMax)
-        {
-            Random rand = new Random();
-            this._vx = rand.Next(vMin, vMin);
-            this._vy = rand.Next(vMin, vMax);
-        }
-
-        public bool checkIfOutOfBounds(int length, int width)
-        {
-            if (this._x - this._r < 0 || this._x + this._r > length || this._y - this._r < 0 || this._y + this._r > width)
+            if (this._X + this._Vx + this._R < BoardWidth && this._X + this._Vx - this._R > 0
+                && this._Y + this._Vy + this._R < BoardHeight && this._Y + this._Vy - this._R > 0)
             {
                 return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
+        }
+
+        public override void RandomVelocity(int min, int max)
+        {
+            Random rand = new Random();
+            this._Vy = rand.Next(min, max);
+            this._Vx = rand.Next(min, max);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            _propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
+

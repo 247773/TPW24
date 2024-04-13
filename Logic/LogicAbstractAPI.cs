@@ -4,20 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Data;
-
 namespace Logic
 {
     public abstract class LogicAbstractAPI
     {
         public static LogicAbstractAPI CreateLogicAPI()
         {
-            return new Table(259, 146); // wymiary stolu bilarodwego typu 8ft
+            return new Table(580, 420);
         }
 
-        public abstract void CreateBalls(int numOfBalls, int radius); //operacja interaktywna (twórz kule)
-        public abstract void UpdateBalls();
-        public abstract List<(int, int)> GetBallsPosition(); //operacja reaktywna (okresowe wysłanie położenia kul)
+        public abstract void CreateBalls(int numOfBalls, int r);
         public abstract void StartSimulation();
+        public abstract void ClearTable();
+        public abstract List<List<int>> GetBallsPosition();
+        public abstract List<IBall> GetBalls();
     }
 }
