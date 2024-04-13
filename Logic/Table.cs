@@ -10,14 +10,13 @@ namespace Logic
 {
     internal class Table : LogicAbstractAPI
     {
+        private readonly DataAbstractAPI _dataLayer;
         public int _length { get; set; }
         public int _width { get; set; }
         public List<IBall> _balls { get; set; }
         public List<Task> _tasks { get; set; }
 
-        private bool stopTasks;
-
-        private readonly DataAbstractAPI _dataLayer;
+        private bool _stopTasks;
 
         public Table(int length, int width)
         {
@@ -39,13 +38,13 @@ namespace Logic
                 _balls.Add(ball);
                 _tasks.Add(new Task(() =>
                 {
-                    while (!stopTasks)
+                    while (!_stopTasks)
                     {
-                        ball.RandomVelocity(-5, 5);
-                        if (ball.CheckCollision(_length, _width))
+                        ball.RandomVelocity(-7, 7);
+                        if (ball.IsWithinBounds(_length, _width))
                         {
                             ball.MoveBall();
-                            Thread.Sleep(100);
+                            Thread.Sleep(50);
                         }
                     }
                 }));
@@ -54,7 +53,7 @@ namespace Logic
 
         public override void StartSimulation()
         {
-            stopTasks = false;
+            _stopTasks = false;
 
             foreach (Task task in _tasks)
             {
@@ -62,23 +61,11 @@ namespace Logic
             }
         }
 
-        public override void ClearTable()
+        public override async void ClearTable()
         {
-            stopTasks = true;
-            bool IsEveryTaskCompleted = false;
+            _stopTasks = true;
 
-            while (!IsEveryTaskCompleted)
-            {
-                IsEveryTaskCompleted = true;
-                foreach (Task task in _tasks)
-                {
-                    if (!task.IsCompleted)
-                    {
-                        IsEveryTaskCompleted = false;
-                        break;
-                    }
-                }
-            }
+            await Task.WhenAll(_tasks);
 
             foreach (Task task in _tasks)
             {

@@ -44,24 +44,19 @@ namespace Logic
             Y += _Vy;
         }
 
-        public override bool CheckCollision(int BoardWidth, int BoardHeight)
+        public override bool IsWithinBounds(int length, int width)
         {
-            if (this._X + this._Vx + this._R < BoardWidth && this._X + this._Vx - this._R > 0
-                && this._Y + this._Vy + this._R < BoardHeight && this._Y + this._Vy - this._R > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            bool isWithinXBounds = this._X + this._Vx + this._R < length && this._X + this._Vx - this._R > 0;
+            bool isWithinYBounds = this._Y + this._Vy + this._R < width && this._Y + this._Vy - this._R > 0;
+
+            return isWithinXBounds && isWithinYBounds;
         }
 
-        public override void RandomVelocity(int min, int max)
+        public override void RandomVelocity(int Vmin, int Vmax)
         {
             Random rand = new Random();
-            this._Vy = rand.Next(min, max);
-            this._Vx = rand.Next(min, max);
+            this._Vy = rand.Next(Vmin, Vmax);
+            this._Vx = rand.Next(Vmin, Vmax);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

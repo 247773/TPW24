@@ -37,8 +37,8 @@ namespace ViewModel
 
         public void StartProcess()
         {
-            int BallsAmountInt = int.Parse(NumOfBalls);
-            _modelAPI.Start(BallsAmountInt, _ballRadius);
+            int ballsQuantity = int.Parse(NumOfBalls);
+            _modelAPI.Start(ballsQuantity, _ballRadius);
             RaisePropertyChanged("_modelBalls");
         }
 

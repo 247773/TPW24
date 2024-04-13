@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 using Logic;
 
@@ -28,9 +25,9 @@ namespace Model
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
-        public override void UpdateModelBall(Object s, PropertyChangedEventArgs e)
+        public override void UpdateModelBall(Object o, PropertyChangedEventArgs e)
         {
-            IBall ball = (IBall)s;
+            IBall ball = (IBall)o;
             if (e.PropertyName == "X")
             {
                 PositionX = ball.X;

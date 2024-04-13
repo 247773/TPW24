@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading;
 
 using Logic;
 
@@ -20,9 +19,9 @@ namespace Model
             _modelBalls.Clear();
             foreach (IBall ball in _logicAPI.GetBalls())
             {
-                IModelBall c = IModelBall.CreateModelBall(ball.X, ball.Y, ball.R);
-                _modelBalls.Add(c);
-                ball.PropertyChanged += c.UpdateModelBall!;
+                IModelBall b = IModelBall.CreateModelBall(ball.X, ball.Y, ball.R);
+                _modelBalls.Add(b);
+                ball.PropertyChanged += b.UpdateModelBall!;
             }
             return _modelBalls;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Logic
 {
@@ -17,9 +12,9 @@ namespace Logic
         public abstract int X { get; set; }
         public abstract int Y { get; set; }
         public abstract int R { get; set; }
-        public abstract void RandomVelocity(int min, int max);
+        public abstract void RandomVelocity(int Vmin, int Vmax);
         public abstract void MoveBall();
-        public abstract bool CheckCollision(int BoardWidth, int BoardHeight);
+        public abstract bool IsWithinBounds(int length, int width);
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
     }
