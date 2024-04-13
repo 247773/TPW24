@@ -6,8 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-using Ball = Data.Ball;
-
 namespace Logic
 {
     internal class Table : LogicAbstractAPI
@@ -83,7 +81,7 @@ namespace Logic
             List<(int, int)> positions = new List<(int, int)>();
             foreach (Ball ball in _balls)
             {
-                positions.Add((ball.X, ball.Y));
+                positions.Add((ball._x, ball._y));
             }
             return positions;
         }
