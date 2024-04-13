@@ -1,28 +1,28 @@
 ﻿using Model;
+using System;
 using System.Collections.ObjectModel;
 
 namespace ViewModel
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel : ViewModelBase
     {
         private ModelAbstractAPI _modelAPI;
 
         public ObservableCollection<IModelBall> _modelBalls => _modelAPI.GetModelBalls();
-
         public RelayCommand Start { get; }
 
-        public RelayCommand Stop { get;  }
+        public RelayCommand Stop { get; }
 
-        private String _BallsAmount = "";
+        private String _NumOfBalls = "";
 
         private int _ballRadius = 10;
 
         public String NumOfBalls
         {
-            get => _BallsAmount;
+            get => _NumOfBalls;
             set
             {
-                _BallsAmount = value;
+                _NumOfBalls = value;
                 RaisePropertyChanged();
             }
         }
@@ -32,6 +32,7 @@ namespace ViewModel
             _modelAPI = ModelAbstractAPI.CreateModelAPI();
             Start = new RelayCommand(StartProcess);
             Stop = new RelayCommand(StopProcess);
+
         }
 
         public void StartProcess()
