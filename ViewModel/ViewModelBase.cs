@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Model;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace ViewModel
