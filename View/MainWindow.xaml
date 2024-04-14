@@ -25,23 +25,23 @@
             FontSize="20"
             Height="32"
             HorizontalAlignment="Left"
-            Margin="18,108,0,0"
+            Margin="54,290,0,0"
             VerticalAlignment="Top"
             Width="60" />
         <TextBox
             FontSize="20"
             HorizontalAlignment="Left"
-            Margin="24,61,0,0"
+            Margin="24,0,0,0"
             Text="{Binding NumOfBalls}"
             TextWrapping="Wrap"
-            VerticalAlignment="Top"
+            VerticalAlignment="Center"
             Width="120"  />
         <Label
             Content="Podaj liczbe kul"
             FontSize="20"
             Height="35"
             HorizontalAlignment="Left"
-            Margin="10,21,0,0"
+            Margin="10,159,0,0"
             VerticalAlignment="Top"
             Width="148" />
         <Button
@@ -51,22 +51,22 @@
             FontSize="20"
             Height="32"
             HorizontalAlignment="Left"
-            Margin="93,108,0,0"
+            Margin="54,342,0,0"
             VerticalAlignment="Top"
-            Width="61" RenderTransformOrigin="-0.157,1.447" >
+            Width="61" RenderTransformOrigin="0.514,0.531" >
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform Angle="-0.21"/>
-                    <TranslateTransform X="0.083" Y="0.195"/>
+                    <TranslateTransform X="-0.024" Y="0.043"/>
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
         <ItemsControl
             Height="420"
             ItemsSource="{Binding _modelBalls}"
-            Margin="190,7,20,7">
+            Margin="190,10,20,10">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Background="#155843" />
