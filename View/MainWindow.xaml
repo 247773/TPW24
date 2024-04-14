@@ -19,7 +19,7 @@
             Margin="10,167,0,0"
             VerticalAlignment="Top" />
         <Button
-            Background="#27a75a"
+            Background="#309bff"
             Command="{Binding Start}"
             Content="Start"
             FontSize="20"
@@ -45,7 +45,7 @@
             VerticalAlignment="Top"
             Width="148" />
         <Button
-            Background="#FF0000"
+            Background="#c21594"
             Command="{Binding Stop}"
             Content="Stop"
             FontSize="20"
