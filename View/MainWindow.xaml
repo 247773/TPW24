@@ -66,7 +66,7 @@
         <ItemsControl
             Height="420"
             ItemsSource="{Binding _modelBalls}"
-            Margin="190,10,20,10">
+            Margin="195,10,30,10">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Background="#155843" />
@@ -80,7 +80,11 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Ellipse Width= "{Binding Radius}" Height="{Binding Radius}" Fill="DarkRed" />
+                    <Ellipse Width= "{Binding Radius}" Height="{Binding Radius}" Fill="DarkRed">
+                        <Ellipse.RenderTransform>
+                            <TranslateTransform X="-20" Y="-20" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

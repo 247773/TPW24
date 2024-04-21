@@ -1,6 +1,5 @@
-﻿using System.Collections.ObjectModel;
-
-using Logic;
+﻿using Logic;
+using System.Collections.ObjectModel;
 
 namespace Model
 {
@@ -11,7 +10,7 @@ namespace Model
 
         public ModelAPI()
         {
-            _logicAPI = LogicAbstractAPI.CreateLogicAPI();
+            _logicAPI = LogicAbstractAPI.CreateAPI();
         }
 
         public override ObservableCollection<IModelBall> GetModelBalls()
