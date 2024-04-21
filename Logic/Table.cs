@@ -1,16 +1,10 @@
 ﻿using Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Logic
 {
     internal class Table : LogicAbstractAPI
     {
-        private readonly DataAbstractAPI _dataLayer;
+        private DataAbstractAPI _dataLayer;
         public int _length { get; set; }
         public int _width { get; set; }
         public List<IBall> _balls { get; set; }
@@ -18,13 +12,14 @@ namespace Logic
 
         private bool _stopTasks;
 
-        public Table(int length, int width)
+        public Table(int length, int width, DataAbstractAPI data)
         {
-            this._length = length;
-            this._width = width;
+            _length = length;
+            _width = width;
             _tasks = new List<Task>();
             _balls = new List<IBall>();
-            _dataLayer = DataAbstractAPI.CreateDataAPI();
+            _dataLayer = data;
+
         }
 
         public override void CreateBalls(int numOfBalls, int r)
@@ -61,18 +56,19 @@ namespace Logic
             }
         }
 
-        public override async void ClearTable()
+        public override void ClearTable()
         {
             _stopTasks = true;
 
-            await Task.WhenAll(_tasks);
-
             foreach (Task task in _tasks)
             {
-                task.Dispose();
+                if (task.IsCompleted)
+                {
+                    task.Dispose();
+                }
             }
-            _balls.Clear();
             _tasks.Clear();
+            _balls.Clear();
         }
 
         public override List<List<int>> GetBallsPosition()

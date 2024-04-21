@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Data;
 
 namespace Logic
 {
     public abstract class LogicAbstractAPI
     {
-        public static LogicAbstractAPI CreateLogicAPI()
+        public static LogicAbstractAPI CreateAPI(DataAbstractAPI data = null)
         {
-            return new Table(580, 420);
+            return new Table(580, 420, data ?? DataAbstractAPI.CreateAPI());
         }
 
         public abstract void CreateBalls(int numOfBalls, int r);
