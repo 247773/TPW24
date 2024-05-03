@@ -4,91 +4,100 @@ namespace Logic
 {
     internal class Table : LogicAbstractAPI
     {
-        private DataAbstractAPI _dataLayer;
-        public int _length { get; set; }
-        public int _width { get; set; }
-        public List<IBall> _balls { get; set; }
-        public List<Task> _tasks { get; set; }
+        public int Length { get; set; }
+        public int Width { get; set; }
+        public int Radius { get; set; }
+        public List<IBall> Balls { get; set; }
+        public List<Task> Tasks { get; set; }
 
-        private bool _stopTasks;
+        private bool stopTasks;
+        internal object locker = new object();
 
-        public Table(int length, int width, DataAbstractAPI data)
+        public IDataTable dataAPI;
+
+        public Table(int length, int width)
         {
-            _length = length;
-            _width = width;
-            _tasks = new List<Task>();
-            _balls = new List<IBall>();
-            _dataLayer = data;
-
+            this.Length = length;
+            this.Width = width;
+            Tasks = new List<Task>();
+            Balls = new List<IBall>();
+            dataAPI = IDataTable.CreateAPI(length, width);
         }
 
-        public override void CreateBalls(int numOfBalls, int r)
+        public override List<IBall> GetBalls()
         {
-            Random random = new Random();
-            for (int i = 0; i < numOfBalls; i++)
+            return Balls;
+        }
+
+        public override void CreateBalls(int n, int r)
+        {
+            Radius = r;
+            for (int i = 0; i < n; i++)
             {
-                int x = random.Next(r, _length - r);
-                int y = random.Next(r, _width - r);
-                IBall ball = IBall.CreateBall(x, y, r);
-                _balls.Add(ball);
-                _tasks.Add(new Task(() =>
-                {
-                    while (!_stopTasks)
-                    {
-                        ball.RandomVelocity(-7, 7);
-                        if (ball.IsWithinBounds(_length, _width))
-                        {
-                            ball.MoveBall();
-                            Thread.Sleep(50);
-                        }
-                    }
-                }));
+                Random random = new Random();
+                int x = random.Next(r, Length - r);
+                int y = random.Next(r, Width - r);
+                int m = 5;
+                int vX = random.Next(-5, 5);
+                int vY = random.Next(-5, 5);
+                IDataBall dataBall = dataAPI.CreateDataBall(x, y, Radius, m, vX, vY);
+                Ball ball = new Ball(dataBall.X, dataBall.Y, Radius);
+                dataBall.PropertyChanged += ball.UpdateBall;
+                Balls.Add(ball);
             }
         }
 
-        public override void StartSimulation()
+        private void CheckBallCollision(IBall me)
         {
-            _stopTasks = false;
-
-            foreach (Task task in _tasks)
+            foreach (IBall ball in Balls)
             {
-                task.Start();
+                if (!ball.Equals(me))
+                {
+                    // TODO zmienic na odleglosc euklidesowa, poki co jest kwadratowa
+                    if (Math.Abs(ball.X - me.X) < me.R + ball.R && Math.Abs(ball.Y - me.Y) < me.R + ball.R)
+                    {
+                        Monitor.Enter(ball);
+                        Monitor.Enter(me);
+                        try
+                        {
+                            ball.CheckBallCollision(me);
+                            me.CheckBallCollision(ball);
+                            ball.UseTempSpeed();
+                            me.UseTempSpeed();
+                            ball.MoveBall();
+                            me.MoveBall();
+                        }
+                        finally { Monitor.Exit(ball); Monitor.Exit(me); }
+                    }
+                    return;
+                }
             }
         }
 
         public override void ClearTable()
         {
-            _stopTasks = true;
+            stopTasks = true;
+            bool IsEveryTaskCompleted = false;
 
-            foreach (Task task in _tasks)
+            while (!IsEveryTaskCompleted)
             {
-                if (task.IsCompleted)
+                IsEveryTaskCompleted = true;
+                foreach (Task task in Tasks)
                 {
-                    task.Dispose();
+                    if (!task.IsCompleted)
+                    {
+                        IsEveryTaskCompleted = false;
+                        break;
+                    }
                 }
             }
-            _tasks.Clear();
-            _balls.Clear();
-        }
 
-        public override List<List<int>> GetBallsPosition()
-        {
-            List<List<int>> positions = new List<List<int>>();
-            foreach (Ball b in _balls)
+            foreach (Task task in Tasks)
             {
-                List<int> BallPosition = new List<int>
-                {
-                    b._X,
-                    b._Y
-                };
-                positions.Add(BallPosition);
+                task.Dispose();
             }
-            return positions;
-        }
-
-        public override List<IBall> GetBalls()
-        {
-            return _balls;
+            Balls.Clear();
+            Tasks.Clear();
         }
     }
 }

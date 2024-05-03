@@ -12,9 +12,14 @@ namespace Logic
         public abstract int X { get; set; }
         public abstract int Y { get; set; }
         public abstract int R { get; set; }
-        public abstract void RandomVelocity(int Vmin, int Vmax);
+        public abstract int Vx { get; set; }
+        public abstract int Vy { get; set; }
+        public abstract bool BouncedBack { get; set;}
+        
         public abstract void MoveBall();
-        public abstract bool IsWithinBounds(int length, int width);
+        public abstract void CheckTableCollision(int length, int width);
+        public abstract void CheckBallCollision(IBall ball);
+        public abstract void UseTempSpeed();
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
     }

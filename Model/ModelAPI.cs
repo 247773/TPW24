@@ -30,10 +30,9 @@ namespace Model
             _logicAPI.ClearTable();
         }
 
-        public override void Start(int numOfBalls, int r)
+        public override void Start(int n, int r)
         {
-            _logicAPI.CreateBalls(numOfBalls, r);
-            _logicAPI.StartSimulation();
+            _logicAPI.CreateBalls(n, r);
         }
     }
 }

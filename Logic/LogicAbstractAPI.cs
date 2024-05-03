@@ -4,15 +4,13 @@ namespace Logic
 {
     public abstract class LogicAbstractAPI
     {
-        public static LogicAbstractAPI CreateAPI(DataAbstractAPI data = null)
+        public static LogicAbstractAPI CreateAPI()
         {
-            return new Table(580, 420, data ?? DataAbstractAPI.CreateAPI());
+            return new Table(580, 400);
         }
 
-        public abstract void CreateBalls(int numOfBalls, int r);
-        public abstract void StartSimulation();
-        public abstract void ClearTable();
-        public abstract List<List<int>> GetBallsPosition();
         public abstract List<IBall> GetBalls();
+        public abstract void CreateBalls(int n, int r);
+        public abstract void ClearTable();
     }
 }
