@@ -19,8 +19,5 @@ namespace Data
         public abstract int Vy { get; set; }
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
-
-        public abstract void MoveBall();
-        public abstract void StartSimulation();
     }
 }

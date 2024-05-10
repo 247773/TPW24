@@ -7,7 +7,9 @@ namespace Logic
     {
         public int Length { get; set; }
         public int Width { get; set; }
-        public int _ballRadius { get; set; }
+        
+        private int _ballRadius { get; set; }
+         
         public List<IBall> Balls { get; set; }
         public List<Task> Tasks { get; set; }
 

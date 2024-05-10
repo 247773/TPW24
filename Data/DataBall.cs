@@ -5,21 +5,21 @@ namespace Data
 {
     internal class DataBall : IDataBall
     {
-        private int _X;
-        private int _Y;
+        private int _x;
+        private int _y;
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
         public override int X
         {
-            get => _X;
-            set { _X = value; RaisePropertyChanged(); }
+            get => _x;
+            set { _x = value; RaisePropertyChanged(); }
         }
 
         public override int Y
         {
-            get => _Y;
-            set { _Y = value; RaisePropertyChanged(); }
+            get => _y;
+            set { _y = value; RaisePropertyChanged(); }
         }
 
         public override int R { get; set; }
@@ -29,8 +29,8 @@ namespace Data
 
         internal DataBall(int x, int y, int r, int m, int vX, int vY)
         {
-            this._X = x;
-            this._Y = y;
+            this._x = x;
+            this._y = y;
             this.R = r;
             this.M = m;
             this.Vx = vX;
@@ -38,13 +38,13 @@ namespace Data
             Task task = Task.Run(StartSimulation);
         }
 
-        public override void MoveBall()
+        public void MoveBall()
         {
             X += Vx;
             Y += Vy;
         }
 
-        public override void StartSimulation()
+        public void StartSimulation()
         {
             while (true)
             {
