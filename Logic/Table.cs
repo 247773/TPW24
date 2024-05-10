@@ -1,4 +1,5 @@
 ﻿using Data;
+using System.ComponentModel;
 
 namespace Logic
 {
@@ -43,50 +44,66 @@ namespace Logic
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, Radius, m, vX, vY);
                 Ball ball = new Ball(dataBall.X, dataBall.Y, Radius);
                 dataBall.PropertyChanged += ball.UpdateBall;
+                dataBall.PropertyChanged += CheckWallCollision;
                 Balls.Add(ball);
             }
         }
 
-        private void CheckBallCollision(IBall me)
+        private void CheckWallCollision(Object s, PropertyChangedEventArgs e)
         {
-            foreach (IBall ball in Balls)
+            IDataBall ball = (IDataBall)s;
+            if (ball.X + ball.Vx + ball.R > dataAPI.Length || ball.X + ball.Vx - ball.R < 0)
             {
-                if (!ball.Equals(me))
-                {
-                    // TODO zmienic na odleglosc euklidesowa, poki co jest kwadratowa
-                    if (Math.Abs(ball.X - me.X) < me.R + ball.R && Math.Abs(ball.Y - me.Y) < me.R + ball.R)
-                    {
-                        Monitor.Enter(ball);
-                        Monitor.Enter(me);
-                        try
-                        {
-                            ball.CheckBallCollision(me);
-                            me.CheckBallCollision(ball);
-                            ball.UseTempSpeed();
-                            me.UseTempSpeed();
-                            ball.MoveBall();
-                            me.MoveBall();
-                        }
-                        finally { Monitor.Exit(ball); Monitor.Exit(me); }
-                    }
-                    return;
-                }
+                ball.Vx = -ball.Vx;
             }
+            if (ball.Y + ball.Vy + ball.R > dataAPI.Width || ball.Y + ball.Vy - ball.R < 0)
+            {
+                ball.Vy = -ball.Vy;
+            }
+
+
         }
+
+        //private void CheckBallCollision(IBall me)
+        //{
+        //    foreach (IBall ball in Balls)
+        //    {
+        //        if (!ball.Equals(me))
+        //        {
+        //            // TODO zmienic na odleglosc euklidesowa, poki co jest kwadratowa
+        //            if (Math.Abs(ball.X - me.X) < me.R + ball.R && Math.Abs(ball.Y - me.Y) < me.R + ball.R)
+        //            {
+        //                Monitor.Enter(ball);
+        //                Monitor.Enter(me);
+        //                try
+        //                {
+        //                    ball.CheckBallCollision(me);
+        //                    me.CheckBallCollision(ball);
+        //                    ball.UseTempSpeed();
+        //                    me.UseTempSpeed();
+        //                    ball.MoveBall();
+        //                    me.MoveBall();
+        //                }
+        //                finally { Monitor.Exit(ball); Monitor.Exit(me); }
+        //            }
+        //            return;
+        //        }
+        //    }
+        //}
 
         public override void ClearTable()
         {
             stopTasks = true;
-            bool IsEveryTaskCompleted = false;
+            bool _isEveryTaskCompleted = false;
 
-            while (!IsEveryTaskCompleted)
+            while (!_isEveryTaskCompleted)
             {
-                IsEveryTaskCompleted = true;
+                _isEveryTaskCompleted = true;
                 foreach (Task task in Tasks)
                 {
                     if (!task.IsCompleted)
                     {
-                        IsEveryTaskCompleted = false;
+                        _isEveryTaskCompleted = false;
                         break;
                     }
                 }
