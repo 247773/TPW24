@@ -8,7 +8,7 @@ namespace Logic
     {
         private int _X;
         private int _Y;
-        private int _R;
+        private int _r;
         private int _Vx;
         private int _Vy;
         public override event PropertyChangedEventHandler? PropertyChanged;
@@ -27,8 +27,8 @@ namespace Logic
 
         public override int R
         {
-            get => _R;
-            set { _R = value; RaisePropertyChanged(); }
+            get => _r;
+            set { _r = value; RaisePropertyChanged(); }
         }
 
         public override int Vx

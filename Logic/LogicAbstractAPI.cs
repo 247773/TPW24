@@ -6,7 +6,7 @@ namespace Logic
     {
         public static LogicAbstractAPI CreateAPI()
         {
-            return new Table(580, 400);
+            return new Table(580, 420);
         }
 
         public abstract List<IBall> GetBalls();

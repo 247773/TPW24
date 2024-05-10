@@ -7,12 +7,9 @@ namespace Logic
     {
         public int Length { get; set; }
         public int Width { get; set; }
-        public int Radius { get; set; }
+        public int _ballRadius { get; set; }
         public List<IBall> Balls { get; set; }
         public List<Task> Tasks { get; set; }
-
-        private bool stopTasks;
-        internal object locker = new object();
 
         public IDataTable dataAPI;
 
@@ -32,17 +29,17 @@ namespace Logic
 
         public override void CreateBalls(int n, int r)
         {
-            Radius = r;
+            _ballRadius = r;
+            Random random = new Random();
             for (int i = 0; i < n; i++)
             {
-                Random random = new Random();
                 int x = random.Next(r, Length - r);
                 int y = random.Next(r, Width - r);
-                int m = 5;
+                int m = random.Next(1, 5);
                 int vX = random.Next(-5, 5);
                 int vY = random.Next(-5, 5);
-                IDataBall dataBall = dataAPI.CreateDataBall(x, y, Radius, m, vX, vY);
-                Ball ball = new Ball(dataBall.X, dataBall.Y, Radius);
+                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
+                Ball ball = new(dataBall.X, dataBall.Y, _ballRadius);
                 dataBall.PropertyChanged += ball.UpdateBall;
                 dataBall.PropertyChanged += CheckWallCollision;
                 Balls.Add(ball);
@@ -93,7 +90,6 @@ namespace Logic
 
         public override void ClearTable()
         {
-            stopTasks = true;
             bool _isEveryTaskCompleted = false;
 
             while (!_isEveryTaskCompleted)
