@@ -1,4 +1,4 @@
-﻿using Data;
+using Data;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -43,6 +43,7 @@ namespace Logic
         }
         public int TempVx { get; set; }
         public int TempVy { get; set; }
+
         public override bool BouncedBack { get; set; }
 
         internal Ball(int x, int y, int r)
@@ -72,29 +73,30 @@ namespace Logic
             }
         }
 
+        // chyba bedziemy pozniej przekazywac tu 2 kule i seterem ustawiac ich predkosci
+        // sprawdz czy dobrze matme tu zrobilem
         public override void CheckBallCollision(IBall otherBall)
         {
-            double thisMass = 1;
+            double myMass = 1;
             double otherMass = 1;
 
-            double thisV = Math.Sqrt(this.Vx * this.Vx + this.Vy * this.Vy);
+            double myV = Math.Sqrt(this.Vx * this.Vx + this.Vy * this.Vy);
             double otherV = Math.Sqrt(otherBall.Vx * otherBall.Vx + otherBall.Vy * otherBall.Vy);
 
             double contactAngle = Math.Atan(Math.Abs(this.Y - otherBall.Y / this.X - otherBall.X));
 
-            double thisMovementAngle = Math.Atan(this.Vy / this.Vx);
+            double myMovementAngle = Math.Atan(this.Vy / this.Vx);
             double otherMovementAngle = Math.Atan(otherBall.Vy / otherBall.Vx);
 
-            double VxNumerator = (thisV * Math.Cos(thisMovementAngle - contactAngle) * (thisMass - otherMass) + 2 * otherV * otherMass *  Math.Cos(otherMovementAngle - contactAngle) * Math.Cos(contactAngle));
-            double addToVx = thisV * Math.Sin(thisMovementAngle - contactAngle) * Math.Cos(contactAngle + Math.PI / 2f);
+            double VxNumerator = (myV * Math.Cos(myMovementAngle - contactAngle) * (myMass - otherMass) + 2 * otherV * otherMass * Math.Cos(otherMovementAngle - contactAngle) * Math.Cos(contactAngle));
+            double VxDenominator = myMass + otherMass;
+            double addToVx = myV * Math.Sin(myMovementAngle - contactAngle) * Math.Cos(contactAngle + Math.PI / 2f);
 
-            double VyNumerator = (thisV * Math.Cos(thisMovementAngle - contactAngle) * (thisMass - otherMass) + 2 * otherV * otherMass * Math.Cos(otherMovementAngle - contactAngle) * Math.Sin(contactAngle));
-            double addToVy = thisV * Math.Sin(thisMovementAngle - contactAngle) * Math.Sin(contactAngle + Math.PI / 2f);
+            double VyNumerator = (myV * Math.Cos(myMovementAngle - contactAngle) * (myMass - otherMass) + 2 * otherV * otherMass * Math.Cos(otherMovementAngle - contactAngle) * Math.Sin(contactAngle));
+            double addToVy = myV * Math.Sin(myMovementAngle - contactAngle) * Math.Sin(contactAngle + Math.PI / 2f);
 
-            double Denominator = thisMass + otherMass;
-
-            this.Vx = (int)(VxNumerator / Denominator + addToVx);
-            this.Vy = (int)(VyNumerator / Denominator + addToVy);
+            TempVx = (int)(VxNumerator / VxDenominator + addToVx);
+            TempVy = (int)(VyNumerator / VxDenominator + addToVy);
             if (TempVy == 0)
             {
                 TempVy = 1;
@@ -110,8 +112,8 @@ namespace Logic
         public void UpdateBall(Object s, PropertyChangedEventArgs e)
         {
             IDataBall ball = (IDataBall)s;
-            this._x = ball.X;
-            this._y = ball.Y;
+            X = ball.X;
+            Y = ball.Y;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

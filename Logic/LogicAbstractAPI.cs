@@ -1,6 +1,4 @@
-﻿using Data;
-
-namespace Logic
+﻿namespace Logic
 {
     public abstract class LogicAbstractAPI
     {

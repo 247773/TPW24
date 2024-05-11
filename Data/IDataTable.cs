@@ -13,8 +13,8 @@ namespace Data
             return new DataTable(length, width);
         }
 
-        public abstract int Length { get; set; }
-        public abstract int Width { get; set; }
+        public abstract int Length { get; set; } // dluzsza krawedz stolu
+        public abstract int Width { get; set; } //krotsza krawedz stolu
 
         public abstract List<IDataBall> GetBalls();
         public abstract IDataBall CreateDataBall(int x, int y, int r, int m, int vX = 0, int vY =0);
