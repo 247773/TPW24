@@ -29,11 +29,11 @@ namespace Model
             IBall ball = (IBall)o;
             if (e.PropertyName == "X")
             {
-                PositionX = ball.X;
+                PositionX = (int)ball.X;
             }
             else if (e.PropertyName == "Y")
             {
-                PositionY = ball.Y;
+                PositionY = (int)ball.Y;
             }
         }
 

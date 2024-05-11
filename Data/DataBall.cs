@@ -5,18 +5,18 @@ namespace Data
 {
     internal class DataBall : IDataBall
     {
-        private int _x;
-        private int _y;
+        private double _x;
+        private double _y;
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
-        public override int X
+        public override double X
         {
             get => _x;
             set { _x = value; RaisePropertyChanged(); }
         }
 
-        public override int Y
+        public override double Y
         {
             get => _y;
             set { _y = value; RaisePropertyChanged(); }
@@ -24,21 +24,27 @@ namespace Data
 
         public override int R { get; set; }
         public override int M { get; set; }
-        public override int Vx { get; set; }
-        public override int Vy { get; set; }
+        public override double Vx { get; set; }
+        public override double Vy { get; set; }
+        public override double TempVx { get; set; }
+        public override double TempVy { get; set; }
+        public override bool IsMoved { get; set; }
 
-        internal DataBall(int x, int y, int r, int m, int vX, int vY)
+        private Object _locker = new Object();
+
+        public DataBall(int x, int y, int r, int m, int vX, int vY)
         {
-            this._x = x;
-            this._y = y;
-            this.R = r;
-            this.M = m;
-            this.Vx = vX;
-            this.Vy = vY;
-            Task task = Task.Run(StartSimulation);
+            _x = x;
+            _y = y;
+            R = r;
+            M = m;
+            Vx = vX;
+            Vy = vY;
+            Task.Run(StartSimulation);
+            IsMoved = false;
         }
 
-        public void MoveBall()
+        public override void MoveBall()
         {
             X += Vx;
             Y += Vy;
@@ -48,7 +54,13 @@ namespace Data
         {
             while (true)
             {
-                MoveBall();
+                lock (this)
+                {
+                    if (!IsMoved)
+                    {
+                        MoveBall();
+                    }
+                }
                 Task.Delay(10).Wait();
             }
         }

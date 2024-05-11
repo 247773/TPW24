@@ -6,20 +6,20 @@ namespace Logic
 {
     internal class Ball : IBall, INotifyPropertyChanged
     {
-        private int _x;
-        private int _y;
+        private double _x;
+        private double _y;
         private int _r;
-        private int _vX;
-        private int _vY;
+        private double _vX;
+        private double _vY;
         public override event PropertyChangedEventHandler? PropertyChanged;
        
-        public override int X
+        public override double X
         {
             get => _x;
             set { _x = value; RaisePropertyChanged(); }
         }
 
-        public override int Y
+        public override double Y
         {
             get => _y;
             set { _y = value; RaisePropertyChanged(); }
@@ -31,12 +31,12 @@ namespace Logic
             set { _r = value; RaisePropertyChanged(); }
         }
 
-        public override int Vx
+        public override double Vx
         {
             get => _vX;
             set { _vX = value; }
         }
-        public override int Vy
+        public override double Vy
         {
             get => _vY;
             set { _vY = value; }
@@ -46,21 +46,21 @@ namespace Logic
 
         public override bool BouncedBack { get; set; }
 
-        internal Ball(int x, int y, int r)
+        internal Ball(double x, double y, int r)
         {
             this._x = x;
             this._y = y;
             this.R = r;
-            this.BouncedBack = false;
+            BouncedBack = false;
         }
 
         public override void MoveBall()
         {
-            this._x += this.Vx;
-            this._y += this.Vy;
+            _x += Vx;
+            _y += Vy;
         }
 
-        public override void CheckTableCollision(int length, int width)
+        public override void CheckCollision(int length, int width)
         {
             if (this.X + this.Vx - this.R < 0 || this.X + this.Vx + this.R > length)
             {
@@ -73,8 +73,6 @@ namespace Logic
             }
         }
 
-        // chyba bedziemy pozniej przekazywac tu 2 kule i seterem ustawiac ich predkosci
-        // sprawdz czy dobrze matme tu zrobilem
         public override void CheckBallCollision(IBall otherBall)
         {
             double myMass = 1;

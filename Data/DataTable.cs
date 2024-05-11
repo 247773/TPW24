@@ -13,7 +13,7 @@ namespace Data
 
         private List<IDataBall> _balls = new List<IDataBall>();
 
-        internal DataTable(int length, int width)
+        public DataTable(int length, int width)
         {
             Length = length;
             Width = width;

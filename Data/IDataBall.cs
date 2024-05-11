@@ -9,12 +9,16 @@ namespace Data
             return new DataBall(x, y, r, m, vX, vY);
         }
 
-        public abstract int X { get; set; }
-        public abstract int Y { get; set; }
+        public abstract double X { get; set; }
+        public abstract double Y { get; set; }
         public abstract int R { get; set; }
-        public abstract int M { get; set; } // Masa kuli
-        public abstract int Vx { get; set; }
-        public abstract int Vy { get; set; }
+        public abstract int M { get; set; }
+        public abstract double Vx { get; set; }
+        public abstract double Vy { get; set; }
+        public abstract double TempVx { get; set; }
+        public abstract double TempVy { get; set; }
+        public abstract bool IsMoved { get; set; }
+        public abstract void MoveBall();
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
     }

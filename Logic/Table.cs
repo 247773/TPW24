@@ -13,6 +13,10 @@ namespace Logic
         public List<IBall> Balls { get; set; }
         public List<Task> Tasks { get; set; }
 
+        private Object _locker = new Object();
+        private Barrier _barrier1;
+        private Barrier _barrier2;
+
         public IDataTable dataAPI;
 
         public Table(int length, int width)
@@ -33,18 +37,32 @@ namespace Logic
         public override void CreateBalls(int n, int r)
         {
             _ballRadius = r;
+            _barrier1 = new Barrier(n);
+            _barrier2 = new Barrier(n);
+
             Random random = new Random();
             for (int i = 0; i < n; i++)
             {
                 int x = random.Next(r, Length - r);
                 int y = random.Next(r, Width - r);
-                int m = random.Next(1, 5);
-                int vX = random.Next(-5, 5);
-                int vY = random.Next(-5, 5);
+                int m = random.Next(3, 3);
+                int vX;
+                do
+                {
+                    vX = random.Next(-3, 3);
+                } while (vX == 0);
+                int vY;
+                do
+                {
+                    vY = random.Next(-3, 3);
+                } while (vY == 0);
+          
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
                 Ball ball = new Ball(dataBall.X, dataBall.Y, _ballRadius);
+
                 dataBall.PropertyChanged += ball.UpdateBall;
                 dataBall.PropertyChanged += CheckWallCollision;
+                dataBall.PropertyChanged += CheckBallsCollision;
                 Balls.Add(ball);
             }
         }
@@ -62,41 +80,47 @@ namespace Logic
             }
         }
 
-        /*
-        private void CheckBallCollision(IBall me)
+        private void CheckBallsCollision(Object s, PropertyChangedEventArgs e)
         {
-            foreach (IBall ball in Balls)
+            IDataBall me = (IDataBall)s;
+            foreach (IDataBall ball in dataAPI.GetBalls())
             {
-                if (!ball.Equals(me))
+                if (ball != me)
                 {
-                    // TODO zmienic na odleglosc euklidesowa, poki co jest kwadratowa
-                    if (Math.Abs(ball.X - me.X) < me.R + ball.R && Math.Abs(ball.Y - me.Y) < me.R + ball.R)
+                    if (Math.Sqrt(Math.Pow(ball.X - me.X, 2) + Math.Pow(ball.Y - me.Y, 2)) <= me.R + ball.R)
                     {
-                        Monitor.Enter(ball);
-                        Monitor.Enter(me);
-                        try
+                        lock (me)
                         {
-                            ball.CheckBallCollision(me);
-                            me.CheckBallCollision(ball);
-                            ball.UseTempSpeed();
-                            me.UseTempSpeed();
-                            ball.MoveBall();
-                            me.MoveBall();
+                            BallsCollision(me, ball);
                         }
-                        finally { Monitor.Exit(ball); Monitor.Exit(me); }
                     }
-                    return;
                 }
+            }   
+        }
+
+        private void BallsCollision(IDataBall ball, IDataBall otherBall)
+        {
+            if (Math.Sqrt(Math.Pow(ball.X + ball.Vx - otherBall.X - otherBall.Vx, 2) + Math.Pow(ball.Y + ball.Vy - otherBall.Y - otherBall.Vy, 2)) <= otherBall.R + ball.R)
+            {
+                double weight = 1d;
+
+                double newXMovement = (2d * weight * ball.Vx) / (2d * weight);
+                ball.Vx = (2d * weight * otherBall.Vx) / (2d * weight);
+                otherBall.Vx = newXMovement;
+
+                double newYMovement = (2 * weight * ball.Vy) / (2d * weight);
+                ball.Vy = (2d * weight * otherBall.Vy) / (2d * weight);
+                otherBall.Vy = newYMovement;
             }
-        }*/
+        }
 
         public override void ClearTable()
         {
             bool _isEveryTaskCompleted = false;
 
-            while (!_isEveryTaskCompleted)          // sprawdza czy wszystkie taski sa zakonczone
-            {                                       // jesli tak to wychodzi z petli i task.Dispose()
-                _isEveryTaskCompleted = true;       // uwalnia zasoby
+            while (!_isEveryTaskCompleted)
+            {
+                _isEveryTaskCompleted = true;
                 foreach (Task task in Tasks)
                 {
                     if (!task.IsCompleted)

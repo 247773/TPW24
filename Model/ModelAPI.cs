@@ -18,7 +18,7 @@ namespace Model
             _modelBalls.Clear();
             foreach (IBall ball in _logicAPI.GetBalls())
             {
-                IModelBall b = IModelBall.CreateModelBall(ball.X, ball.Y, ball.R);
+                IModelBall b = IModelBall.CreateModelBall((int)ball.X, (int)ball.Y, ball.R);
                 _modelBalls.Add(b);
                 ball.PropertyChanged += b.UpdateModelBall!;
             }

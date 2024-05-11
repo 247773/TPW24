@@ -9,15 +9,15 @@ namespace Logic
             return new Ball(x, y, r);
         }
 
-        public abstract int X { get; set; }
-        public abstract int Y { get; set; }
+        public abstract double X { get; set; }
+        public abstract double Y { get; set; }
         public abstract int R { get; set; }
-        public abstract int Vx { get; set; }
-        public abstract int Vy { get; set; }
+        public abstract double Vx { get; set; }
+        public abstract double Vy { get; set; }
         public abstract bool BouncedBack { get; set;}
         
         public abstract void MoveBall();
-        public abstract void CheckTableCollision(int length, int width);
+        public abstract void CheckCollision(int length, int width);
         public abstract void CheckBallCollision(IBall ball);
         public abstract void UseTempSpeed();
 
