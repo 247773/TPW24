@@ -87,7 +87,7 @@ namespace Logic
             {
                 if (ball != me)
                 {
-                    if (Math.Sqrt(Math.Pow(ball.X - me.X, 2) + Math.Pow(ball.Y - me.Y, 2)) <= me.R + ball.R)
+                    if (Math.Sqrt(Math.Pow(ball.X - me.X, 2) + Math.Pow(ball.Y - me.Y, 2)) <= me.R / 2 + ball.R / 2)
                     {
                         lock (me)
                         {
@@ -100,7 +100,7 @@ namespace Logic
 
         private void BallsCollision(IDataBall ball, IDataBall otherBall)
         {
-            if (Math.Sqrt(Math.Pow(ball.X + ball.Vx - otherBall.X - otherBall.Vx, 2) + Math.Pow(ball.Y + ball.Vy - otherBall.Y - otherBall.Vy, 2)) <= otherBall.R + ball.R)
+            if (Math.Sqrt(Math.Pow(ball.X + ball.Vx - otherBall.X - otherBall.Vx, 2) + Math.Pow(ball.Y + ball.Vy - otherBall.Y - otherBall.Vy, 2)) <= otherBall.R/2 + ball.R/2)
             {
                 double weight = 1d;
 
