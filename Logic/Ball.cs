@@ -1,4 +1,4 @@
-﻿using Data;
+using Data;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
