@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Logic;
+using System.ComponentModel;
 
 namespace Model
 {
@@ -9,11 +10,11 @@ namespace Model
             return new ModelBall(x, y, r);
         }
 
-        public abstract int PositionX { get; set; }
-        public abstract int PositionY { get; set; }
-        public abstract int Radius { get; set; }
+        public abstract int PositionX { get; }
+        public abstract int PositionY { get; }
+        public abstract int Radius { get; }
 
-        public abstract void UpdateModelBall(Object o, PropertyChangedEventArgs e);
+        public abstract void UpdateModelBall(Object o, LogicEventArgs e);
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
     }

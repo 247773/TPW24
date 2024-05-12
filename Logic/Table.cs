@@ -1,142 +1,132 @@
 using Data;
-using System.ComponentModel;
+using System.Numerics;
 
 namespace Logic
 {
     internal class Table : LogicAbstractAPI
     {
-        public int Length { get; set; }
-        public int Width { get; set; }
-        
+        private int _length;
+        private int _width;
+
         private int _ballRadius { get; set; }
-        
         public List<IBall> Balls { get; set; }
-        public List<Task> Tasks { get; set; }
 
         private Object _locker = new Object();
-        private Barrier _barrier1;
-        private Barrier _barrier2;
 
         public IDataTable dataAPI;
 
-        public Table(int length, int width)
+        public Table(IDataTable api)
         {
-            this.Length = length;
-            this.Width = width;
-            Tasks = new List<Task>();
+            _length = api.Length;
+            _width = api.Width;
             Balls = new List<IBall>();
-            dataAPI = IDataTable.CreateAPI(length, width);
+            dataAPI = api;
         }
 
-        public override List<IBall> GetBalls()
-        {
-            return Balls;
-        }
-
-        
         public override void CreateBalls(int n, int r)
         {
             _ballRadius = r;
-            _barrier1 = new Barrier(n);
-            _barrier2 = new Barrier(n);
-
-            Random random = new Random();
             for (int i = 0; i < n; i++)
             {
-                int x = random.Next(r, Length - r);
-                int y = random.Next(r, Width - r);
-                int m = random.Next(3, 3);
+                Random random = new Random();
+                int x = random.Next(r, _length - r);
+                int y = random.Next(r, _width - r);
+                int weight = random.Next(3, 3);
+
                 int vX;
                 do
                 {
                     vX = random.Next(-3, 3);
                 } while (vX == 0);
+
                 int vY;
                 do
                 {
                     vY = random.Next(-3, 3);
                 } while (vY == 0);
-          
-                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
-                Ball ball = new Ball(dataBall.X, dataBall.Y, _ballRadius);
 
-                dataBall.PropertyChanged += ball.UpdateBall;
-                dataBall.PropertyChanged += CheckWallCollision;
-                dataBall.PropertyChanged += CheckBallsCollision;
+                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, weight, vX, vY);
+                Ball ball = new Ball(dataBall.Position.X, dataBall.Position.Y);
+
+                dataBall.ChangedPosition += ball.UpdateBall;
+                dataBall.ChangedPosition += CheckCollisionWithWall;
+                dataBall.ChangedPosition += CheckBallsCollision;
+
                 Balls.Add(ball);
             }
         }
 
-        private void CheckWallCollision(Object s, PropertyChangedEventArgs e)
+        private void CheckCollisionWithWall(Object s, DataEventArgs e)
         {
             IDataBall ball = (IDataBall)s;
-            if (ball.X + ball.Vx + ball.R > dataAPI.Length || ball.X + ball.Vx - ball.R < 0)
+            if (!ball.HasCollided)
             {
-                ball.Vx = -ball.Vx;
-            }
-            if (ball.Y + ball.Vy + ball.R > dataAPI.Width || ball.Y + ball.Vy - ball.R < 0)
-            {
-                ball.Vy = -ball.Vy;
+                if (ball.Position.X + ball.Velocity.X + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X - _ballRadius < 0)
+                {
+                    ball.Velocity = new Vector2(-ball.Velocity.X, ball.Velocity.Y);
+                }
+                if (ball.Position.Y + ball.Velocity.Y + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y - _ballRadius < 0)
+                {
+                    ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
+                }
             }
         }
 
-        private void CheckBallsCollision(Object s, PropertyChangedEventArgs e)
+        private void CheckBallsCollision(Object s, DataEventArgs e)
         {
             IDataBall me = (IDataBall)s;
-            foreach (IDataBall ball in dataAPI.GetBalls())
+            lock (_locker)
             {
-                if (ball != me)
+                if (!me.HasCollided)
                 {
-                    if (Math.Sqrt(Math.Pow(ball.X - me.X, 2) + Math.Pow(ball.Y - me.Y, 2)) <= me.R / 2 + ball.R / 2)
+                    foreach (IDataBall ball in dataAPI.GetBalls().ToArray())
                     {
-                        lock (me)
+                        if (ball != me)
                         {
-                            BallsCollision(me, ball);
+                            if (Math.Sqrt(Math.Pow(ball.Position.X - me.Position.X, 2) + Math.Pow(ball.Position.Y - me.Position.Y, 2)) <= 2 * _ballRadius / 2)
+                            {
+                                BallCollision(me, ball);
+                            }
                         }
                     }
                 }
-            }   
+            }
         }
 
-        private void BallsCollision(IDataBall ball, IDataBall otherBall)
+        private void BallCollision(IDataBall ball, IDataBall otherBall)
         {
-            if (Math.Sqrt(Math.Pow(ball.X + ball.Vx - otherBall.X - otherBall.Vx, 2) + Math.Pow(ball.Y + ball.Vy - otherBall.Y - otherBall.Vy, 2)) <= otherBall.R/2 + ball.R/2)
+            if (Math.Sqrt(Math.Pow(ball.Position.X + ball.Velocity.X - otherBall.Position.X - otherBall.Velocity.X, 2) + Math.Pow(ball.Position.Y + ball.Velocity.Y - otherBall.Position.Y - otherBall.Velocity.Y, 2)) <= _ballRadius / 2 + _ballRadius / 2)
             {
-                double weight = 1d;
+                float weight = 1f;
 
-                double newXMovement = (2d * weight * ball.Vx) / (2d * weight);
-                ball.Vx = (2d * weight * otherBall.Vx) / (2d * weight);
-                otherBall.Vx = newXMovement;
+                float otherBallXMovement = (2f * weight * ball.Velocity.X) / (2f * weight);
+                float ballXMovement = (2f * weight * otherBall.Velocity.X) / (2f * weight);
 
-                double newYMovement = (2 * weight * ball.Vy) / (2d * weight);
-                ball.Vy = (2d * weight * otherBall.Vy) / (2d * weight);
-                otherBall.Vy = newYMovement;
+                float otherBallYMovement = (2f * weight * ball.Velocity.Y) / (2f * weight);
+                float ballYMovement = (2f * weight * otherBall.Velocity.Y) / (2f * weight);
+
+
+                ball.Velocity = new Vector2(ballXMovement, ballYMovement);
+                otherBall.Velocity = new Vector2(otherBallXMovement, otherBallYMovement);
+
+                ball.HasCollided = true;
+                otherBall.HasCollided = true;
             }
         }
 
         public override void ClearTable()
         {
-            bool _isEveryTaskCompleted = false;
-
-            while (!_isEveryTaskCompleted)
+            foreach (IDataBall ball in dataAPI.GetBalls().ToArray())
             {
-                _isEveryTaskCompleted = true;
-                foreach (Task task in Tasks)
-                {
-                    if (!task.IsCompleted)
-                    {
-                        _isEveryTaskCompleted = false;
-                        break;
-                    }
-                }
-            }
-
-            foreach (Task task in Tasks)
-            {
-                task.Dispose();
+                ball.ContinueMoving = false;
             }
             Balls.Clear();
-            Tasks.Clear();
+            dataAPI.ClearTable();
+        }
+
+        public override List<IBall> GetBalls()
+        {
+            return Balls;
         }
     }
 }

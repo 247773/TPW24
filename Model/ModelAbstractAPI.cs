@@ -10,9 +10,7 @@ namespace Model
         }
 
         public abstract void Start(int numOfBalls, int r);
-
         public abstract void ClearBalls();
-
         public abstract ObservableCollection<IModelBall> GetModelBalls();
     }
 }

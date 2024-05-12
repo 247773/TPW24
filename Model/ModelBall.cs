@@ -6,35 +6,30 @@ namespace Model
 {
     internal class ModelBall : IModelBall, INotifyPropertyChanged
     {
-        public override int PositionX { get => _PositionX; set { _PositionX = value; RaisePropertyChanged(); } }
-        public override int PositionY { get => _PositionY; set { _PositionY = value; RaisePropertyChanged(); } }
+        private int _x;
+        private int _y;
+        private int _r;
 
-        public override int Radius { get => _Radius; set { _Radius = value; RaisePropertyChanged(); } }
-
-        private int _PositionX { get; set; }
-        private int _PositionY { get; set; }
-        private int _Radius { get; set; }
+        public override int PositionX { get => _x; }
+        public override int PositionY { get => _y; }
+        public override int Radius { get => _r; }
 
         public ModelBall(int x, int y, int r)
         {
-            _PositionX = x;
-            _PositionY = y;
-            _Radius = r;
+            _x = x;
+            _y = y;
+            _r = r;
         }
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
-        public override void UpdateModelBall(Object o, PropertyChangedEventArgs e)
+        public override void UpdateModelBall(Object s, LogicEventArgs e)
         {
-            IBall ball = (IBall)o;
-            if (e.PropertyName == "X")
-            {
-                PositionX = (int)ball.X;
-            }
-            else if (e.PropertyName == "Y")
-            {
-                PositionY = (int)ball.Y;
-            }
+            IBall ball = (IBall)s;
+            _x = (int)ball.Position.X;
+            RaisePropertyChanged("PositionX");
+            _y = (int)ball.Position.Y;
+            RaisePropertyChanged("PositionY");
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

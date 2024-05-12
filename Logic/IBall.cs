@@ -1,26 +1,16 @@
-﻿using System.ComponentModel;
+﻿using System.Numerics;
 
 namespace Logic
 {
     public abstract class IBall
     {
-        public static IBall CreateBall(int x, int y, int r)
+        public static IBall CreateBall(int x, int y)
         {
-            return new Ball(x, y, r);
+            return new Ball(x, y);
         }
 
-        public abstract double X { get; set; }
-        public abstract double Y { get; set; }
-        public abstract int R { get; set; }
-        public abstract double Vx { get; set; }
-        public abstract double Vy { get; set; }
-        public abstract bool BouncedBack { get; set;}
-        
-        public abstract void MoveBall();
-        public abstract void CheckCollision(int length, int width);
-        public abstract void CheckBallCollision(IBall ball);
-        public abstract void UseTempSpeed();
+        public abstract Vector2 Position { get; }
 
-        public abstract event PropertyChangedEventHandler? PropertyChanged;
+        public abstract event EventHandler<LogicEventArgs>? ChangedPosition;
     }
 }

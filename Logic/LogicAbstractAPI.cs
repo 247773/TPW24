@@ -1,14 +1,16 @@
-﻿namespace Logic
+﻿using Data;
+
+namespace Logic
 {
     public abstract class LogicAbstractAPI
     {
-        public static LogicAbstractAPI CreateAPI()
+        public static LogicAbstractAPI CreateAPI(IDataTable dataAPI = null)
         {
-            return new Table(580, 420);
+            return new Table(dataAPI == null ? IDataTable.CreateAPI() : dataAPI);
         }
 
-        public abstract List<IBall> GetBalls();
         public abstract void CreateBalls(int n, int r);
         public abstract void ClearTable();
+        public abstract List<IBall> GetBalls();
     }
 }

@@ -7,6 +7,7 @@ namespace Model
     {
         private LogicAbstractAPI _logicAPI;
         private ObservableCollection<IModelBall> _modelBalls = new ObservableCollection<IModelBall>();
+        private int _radius;
 
         public ModelAPI()
         {
@@ -18,9 +19,9 @@ namespace Model
             _modelBalls.Clear();
             foreach (IBall ball in _logicAPI.GetBalls())
             {
-                IModelBall b = IModelBall.CreateModelBall((int)ball.X, (int)ball.Y, ball.R);
+                IModelBall b = IModelBall.CreateModelBall((int)ball.Position.X, (int)ball.Position.Y, _radius);
                 _modelBalls.Add(b);
-                ball.PropertyChanged += b.UpdateModelBall!;
+                ball.ChangedPosition += b.UpdateModelBall!;
             }
             return _modelBalls;
         }
@@ -32,6 +33,7 @@ namespace Model
 
         public override void Start(int n, int r)
         {
+            _radius = r;
             _logicAPI.CreateBalls(n, r);
         }
     }

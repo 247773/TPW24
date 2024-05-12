@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Data
+﻿namespace Data
 {
     public abstract class IDataTable
     {
-        public static IDataTable CreateAPI(int length, int width)
+        public static IDataTable CreateAPI(int length = 580, int width = 420)
         {
             return new DataTable(length, width);
         }
 
-        public abstract int Length { get; set; } // dluzsza krawedz stolu
-        public abstract int Width { get; set; } // krotsza krawedz stolu
+        public abstract int Length { get; } // dluzsza krawedz stolu
+        public abstract int Width { get; } // krotsza krawedz stolu
 
         public abstract List<IDataBall> GetBalls();
-        public abstract IDataBall CreateDataBall(int x, int y, int r, int m, int vX = 0, int vY =0);
+        public abstract IDataBall CreateDataBall(int x, int y, int r, int m, int vX , int vY);
         public abstract void ClearTable();
 
     }
