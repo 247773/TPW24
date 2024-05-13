@@ -38,6 +38,7 @@ namespace Data
 
         public override void MoveBall()
         {
+            // TODO: sekcja krytyczna -> lock()
             _position += Velocity;
             ChangedPosition?.Invoke(this, new DataEventArgs(this));
         }
