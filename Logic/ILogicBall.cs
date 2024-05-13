@@ -2,11 +2,11 @@
 
 namespace Logic
 {
-    public abstract class IBall
+    public abstract class ILogicBall
     {
-        public static IBall CreateBall(int x, int y)
+        public static ILogicBall CreateBall(int x, int y)
         {
-            return new Ball(x, y);
+            return new LogicBall(x, y);
         }
 
         public abstract Vector2 Position { get; }

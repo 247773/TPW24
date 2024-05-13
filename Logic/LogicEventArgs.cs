@@ -2,8 +2,8 @@
 {
     public class LogicEventArgs
     {
-        public IBall Ball;
-        public LogicEventArgs(IBall ball)
+        public ILogicBall Ball;
+        public LogicEventArgs(ILogicBall ball)
         {
             Ball = ball;
         }

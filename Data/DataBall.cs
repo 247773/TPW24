@@ -38,10 +38,8 @@ namespace Data
 
         public override void MoveBall()
         {
-            _position.X += Velocity.X;
-            _position.Y += Velocity.Y;
-            DataEventArgs args = new DataEventArgs(this);
-            ChangedPosition?.Invoke(this, args);
+            _position += Velocity;
+            ChangedPosition?.Invoke(this, new DataEventArgs(this));
         }
     }
 }

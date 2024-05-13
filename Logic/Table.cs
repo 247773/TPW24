@@ -9,7 +9,7 @@ namespace Logic
         private int _width;
 
         private int _ballRadius { get; set; }
-        public List<IBall> Balls { get; set; }
+        public List<ILogicBall> Balls { get; set; }
 
         private Object _locker = new Object();
 
@@ -19,7 +19,7 @@ namespace Logic
         {
             _length = api.Length;
             _width = api.Width;
-            Balls = new List<IBall>();
+            Balls = new List<ILogicBall>();
             dataAPI = api;
         }
 
@@ -46,7 +46,7 @@ namespace Logic
                 } while (vY == 0);
 
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, weight, vX, vY);
-                Ball ball = new Ball(dataBall.Position.X, dataBall.Position.Y);
+                LogicBall ball = new LogicBall(dataBall.Position.X, dataBall.Position.Y);
 
                 dataBall.ChangedPosition += ball.UpdateBall;
                 dataBall.ChangedPosition += CheckCollisionWithWall;
@@ -124,7 +124,7 @@ namespace Logic
             dataAPI.ClearTable();
         }
 
-        public override List<IBall> GetBalls()
+        public override List<ILogicBall> GetBalls()
         {
             return Balls;
         }

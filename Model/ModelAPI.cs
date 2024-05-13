@@ -17,7 +17,7 @@ namespace Model
         public override ObservableCollection<IModelBall> GetModelBalls()
         {
             _modelBalls.Clear();
-            foreach (IBall ball in _logicAPI.GetBalls())
+            foreach (ILogicBall ball in _logicAPI.GetBalls())
             {
                 IModelBall b = IModelBall.CreateModelBall((int)ball.Position.X, (int)ball.Position.Y, _radius);
                 _modelBalls.Add(b);

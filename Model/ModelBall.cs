@@ -25,13 +25,14 @@ namespace Model
 
         public override void UpdateModelBall(Object s, LogicEventArgs e)
         {
-            IBall ball = (IBall)s;
+            ILogicBall ball = (ILogicBall)s;
             _x = (int)ball.Position.X;
             RaisePropertyChanged("PositionX");
             _y = (int)ball.Position.Y;
             RaisePropertyChanged("PositionY");
         }
 
+        // TODO: zamienić string na liczby?
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

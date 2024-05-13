@@ -11,6 +11,6 @@ namespace Logic
 
         public abstract void CreateBalls(int n, int r);
         public abstract void ClearTable();
-        public abstract List<IBall> GetBalls();
+        public abstract List<ILogicBall> GetBalls();
     }
 }
