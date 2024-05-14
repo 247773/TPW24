@@ -14,6 +14,8 @@ namespace Model
         public override int PositionY { get => _y; }
         public override int Radius { get => _r; }
 
+        // TODO: skalowanie
+
         public ModelBall(int x, int y, int r)
         {
             _x = x;
