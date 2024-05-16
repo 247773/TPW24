@@ -1,89 +1,89 @@
 using Data;
 using Logic;
-using NUnit.Framework;
 using System.Numerics;
-using System.Reflection.Emit;
-using System.Xml.Schema;
 
 namespace LogicTest
 {
-    public class TableTests
+    internal class FakeDataBall : IDataBall
     {
+        private Vector2 _position;
+        public override Vector2 Position { get => _position; }
 
-        LogicAbstractAPI board = LogicAbstractAPI.CreateAPI(new FakeDataAPI(500, 500));
-        internal class FakeDataBall : IDataBall
+        public override Vector2 Velocity { get; set; }
+        public override bool HasCollided { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override bool ContinueMoving { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public override event EventHandler<DataEventArgs> ChangedPosition;
+    }
+
+    internal class FakeDataAPI : IDataTable
+    {
+        public FakeDataAPI(int length, int width)
         {
-            private Vector2 _position;
-            public override Vector2 Position { get => _position; }
-
-            public override Vector2 Velocity { get; set; }
-            public override bool HasCollided { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public override bool ContinueMoving { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-            public override event EventHandler<DataEventArgs> ChangedPosition;
-
-            public override void MoveBall()
-            {
-                throw new NotImplementedException();
-            }
+            Length = length;
+            Width = width;
         }
 
-        internal class FakeDataAPI : IDataTable
+        public override int Length { get; }
+
+        public override int Width { get; }
+
+        public override IDataBall CreateDataBall(int x, int y, int r, int m, int vX, int vY)
         {
-            public FakeDataAPI(int length, int width)
-            {
-                Length = length;
-                Width = width;
-            }
-
-            public override int Length { get; }
-
-            public override int Width { get; }
-
-
-            public override IDataBall CreateDataBall(int x, int y, int r, int m, int vX, int vY)
-            {
-                return new FakeDataBall();
-            }
-
-            public override List<IDataBall> GetBalls()
-            {
-                return new List<IDataBall>();
-            }
-
-            public override void ClearTable()
-            {
-                return;
-            }
+            return new FakeDataBall();
         }
 
+        public override List<IDataBall> GetBalls()
+        {
+            return new List<IDataBall>();
+        }
+
+        public override void ClearTable()
+        {
+            return;
+        }
+    }
+
+    public class Tests
+    {
+        private IDataTable _data;
+        private LogicAbstractAPI _table;
+
+        [SetUp]
+        public void Init()
+        {
+            _data = new FakeDataAPI(500, 500);
+            _table = LogicAbstractAPI.CreateAPI(_data);
+        }
 
         [Test]
         public void ConstructorTest()
         {
-            Assert.IsNotNull(board);
+            Assert.IsNotNull(_table);
         }
 
         [Test]
         public void CreateBallsTest()
         {
-            board.CreateBalls(3, 5);
-            Assert.AreEqual(board.GetBalls().Count, 3);
+            _table.CreateBalls(3, 5);
+            Assert.AreEqual(_table.GetBalls().Count, 3);
         }
+
         [Test]
         public void ClearTableTest()
         {
-            board.CreateBalls(3, 5);
-            Assert.AreEqual(board.GetBalls().Count, 3);
+            _table.CreateBalls(3, 5);
+            Assert.AreEqual(_table.GetBalls().Count, 3);
 
-            board.ClearTable();
-            Assert.AreEqual(board.GetBalls().Count, 0);
+            _table.ClearTable();
+            Assert.AreEqual(_table.GetBalls().Count, 0);
         }
+
         [Test]
-        public void ClearingEmptyBoardTest()
+        public void ClearingEmptyTableTest()
         {
-            board.ClearTable();
-            Assert.AreEqual(board.GetBalls().Count, 0);
+            _table.ClearTable();
+            Assert.AreEqual(_table.GetBalls().Count, 0);
         }
-    }
+    } 
 }

@@ -34,7 +34,6 @@ namespace Model
             RaisePropertyChanged("PositionY");
         }
 
-        // TODO: zamienić string na liczby -> eventArgs
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -28,7 +28,7 @@ namespace Data
             HasCollided = false;
         }
 
-        public async void StartSimulation()
+        private async void StartSimulation()
         {
             while (ContinueMoving)
             {
