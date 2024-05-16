@@ -17,6 +17,8 @@ namespace Data
         public override bool HasCollided { get; set; }
         public override bool ContinueMoving { get; set; }
 
+        private Object _locker = new Object();
+
         public DataBall(int x, int y, int r, int m, int vX, int vY)
         {
             _position = new Vector2(x, y);
@@ -36,11 +38,13 @@ namespace Data
             }
         }
 
-        public override void MoveBall()
+        private void MoveBall()
         {
-            // TODO: sekcja krytyczna -> lock()
-            _position += Velocity;
-            ChangedPosition?.Invoke(this, new DataEventArgs(this));
+            lock (_locker)
+            {
+                _position += Velocity;
+                ChangedPosition?.Invoke(this, new DataEventArgs(this));
+            }
         }
     }
 }
