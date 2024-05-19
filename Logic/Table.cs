@@ -26,12 +26,12 @@ namespace Logic
         public override void CreateBalls(int n, int r)
         {
             _ballRadius = r;
+            Random random = new Random();
             for (int i = 0; i < n; i++)
             {
-                Random random = new Random();
                 int x = random.Next(r, _length - r);
                 int y = random.Next(r, _width - r);
-                int weight = random.Next(3, 3);
+                int m = random.Next(3, 3);
 
                 int vX;
                 do
@@ -45,7 +45,7 @@ namespace Logic
                     vY = random.Next(-3, 3);
                 } while (vY == 0);
 
-                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, weight, vX, vY);
+                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
                 LogicBall ball = new LogicBall(dataBall.Position.X, dataBall.Position.Y);
 
                 dataBall.ChangedPosition += ball.UpdateBall;
