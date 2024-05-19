@@ -10,11 +10,12 @@ namespace Model
         private int _y;
         private int _r;
 
-        public override int PositionX { get => _x; }
-        public override int PositionY { get => _y; }
-        public override int Radius { get => _r; }
+        // Stała reprezentująca współczynnik skalowania
+        private const double _scaleFactor = 1.0;
 
-        // TODO: skalowanie
+        public override int PositionX { get => (int)(_x * _scaleFactor); }
+        public override int PositionY { get => (int)(_y * _scaleFactor); }
+        public override int Radius { get => (int)(_r * _scaleFactor); }
 
         public ModelBall(int x, int y, int r)
         {
