@@ -59,16 +59,13 @@ namespace Logic
         private void CheckCollisionWithWall(Object s, DataEventArgs e)
         {
             IDataBall ball = (IDataBall)s;
-            if (!ball.HasCollided)
+            if (ball.Position.X + ball.Velocity.X + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X - _ballRadius < 0)
             {
-                if (ball.Position.X + ball.Velocity.X + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X - _ballRadius < 0)
-                {
-                    ball.Velocity = new Vector2(-ball.Velocity.X, ball.Velocity.Y);
-                }
-                if (ball.Position.Y + ball.Velocity.Y + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y - _ballRadius < 0)
-                {
-                    ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
-                }
+                ball.Velocity = new Vector2(-ball.Velocity.X, ball.Velocity.Y);
+            }
+            if (ball.Position.Y + ball.Velocity.Y + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y - _ballRadius < 0)
+            {
+                ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
             }
         }
 
@@ -76,20 +73,17 @@ namespace Logic
         {
             IDataBall me = (IDataBall)s;
             lock (_locker)
-            {
-                if (!me.HasCollided)
+            {               
+                foreach (IDataBall ball in dataAPI.GetBalls().ToArray())
                 {
-                    foreach (IDataBall ball in dataAPI.GetBalls().ToArray())
+                    if (ball != me)
                     {
-                        if (ball != me)
+                        if (Math.Sqrt(Math.Pow(ball.Position.X - me.Position.X, 2) + Math.Pow(ball.Position.Y - me.Position.Y, 2)) <= 2 * _ballRadius / 2)
                         {
-                            if (Math.Sqrt(Math.Pow(ball.Position.X - me.Position.X, 2) + Math.Pow(ball.Position.Y - me.Position.Y, 2)) <= 2 * _ballRadius / 2)
-                            {
-                                BallCollision(me, ball);
-                            }
+                            BallCollision(me, ball);
                         }
                     }
-                }
+                }                
             }
         }
 
@@ -108,9 +102,6 @@ namespace Logic
 
                 ball.Velocity = new Vector2(ballXMovement, ballYMovement);
                 otherBall.Velocity = new Vector2(otherBallXMovement, otherBallYMovement);
-
-                ball.HasCollided = true;
-                otherBall.HasCollided = true;
             }
         }
 
@@ -118,7 +109,7 @@ namespace Logic
         {
             foreach (IDataBall ball in dataAPI.GetBalls().ToArray())
             {
-                ball.ContinueMoving = false;
+                ball.Dispose();
             }
             Balls.Clear();
             dataAPI.ClearTable();

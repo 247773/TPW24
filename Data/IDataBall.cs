@@ -6,8 +6,7 @@ namespace Data
     {
         public abstract Vector2 Position { get; }
         public abstract Vector2 Velocity { get; set; }
-        public abstract bool HasCollided { get; set; }
-        public abstract bool ContinueMoving { get; set; }
+        public abstract void Dispose();
 
         public abstract event EventHandler<DataEventArgs> ChangedPosition;
 

@@ -1,8 +1,9 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
+using System.Numerics;
 
 namespace Data
 {
-    internal class DataBall : IDataBall
+    internal class DataBall : IDataBall, IDisposable
     {
         public override event EventHandler<DataEventArgs>? ChangedPosition;
 
@@ -37,8 +38,7 @@ namespace Data
             }
         }
 
-        public override bool HasCollided { get; set; }
-        public override bool ContinueMoving { get; set; }
+        private bool _continueMoving;
 
         private Object _locker = new Object();
         private Object _positionLocker = new Object();
@@ -47,20 +47,27 @@ namespace Data
         public DataBall(int x, int y, int r, int m, int vX, int vY)
         {
             _position = new Vector2(x, y);
-            Velocity = new Vector2(vX, vY);
-            ContinueMoving = true;
+            _velocity = new Vector2(vX, vY);
+            _continueMoving = true;
             Task.Run(StartSimulation);
-            HasCollided = false;
         }
 
         private async void StartSimulation()
         {
-            while (ContinueMoving)
+            Stopwatch stopwatch = new Stopwatch();
+            int movementTime = 10;
+            while (_continueMoving)
             {
+                stopwatch.Start();
                 MoveBall();
-                HasCollided = false;
-                await Task.Delay(10);
-            }
+                stopwatch.Stop();
+                if (movementTime > (int)stopwatch.ElapsedMilliseconds)
+                {
+                    await Task.Delay(movementTime - (int)stopwatch.ElapsedMilliseconds);
+                }
+                stopwatch.Reset();
+            }   
+
         }
 
         private void MoveBall()
@@ -70,6 +77,11 @@ namespace Data
                 _position += Velocity;
                 ChangedPosition?.Invoke(this, new DataEventArgs(this));
             }
+        }
+
+        public override void Dispose()
+        {
+            _continueMoving = false;
         }
     }
 }

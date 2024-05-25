@@ -10,10 +10,13 @@ namespace LogicTest
         public override Vector2 Position { get => _position; }
 
         public override Vector2 Velocity { get; set; }
-        public override bool HasCollided { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override bool ContinueMoving { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public override event EventHandler<DataEventArgs> ChangedPosition;
+
+        public override void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal class FakeDataAPI : IDataTable
