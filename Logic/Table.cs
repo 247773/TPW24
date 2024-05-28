@@ -33,16 +33,16 @@ namespace Logic
                 int y = random.Next(r, _width - r);
                 int m = random.Next(3, 3);
 
-                int vX;
+                float vX;
                 do
                 {
-                    vX = random.Next(-3, 3);
+                    vX = (float)random.NextDouble() / 4;
                 } while (vX == 0);
 
-                int vY;
+                float vY;
                 do
                 {
-                    vY = random.Next(-3, 3);
+                    vY = (float)random.NextDouble() / 4;
                 } while (vY == 0);
 
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);

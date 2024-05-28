@@ -23,7 +23,7 @@
             _balls.Clear();
         }
 
-        public override IDataBall CreateDataBall(int x, int y, int r, int m, int vX, int vY)
+        public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY)
         {
             IDataBall ballData = IDataBall.CreateDataBall(x, y, r, m, vX, vY);
             _balls.Add(ballData);

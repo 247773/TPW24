@@ -31,7 +31,7 @@ namespace LogicTest
 
         public override int Width { get; }
 
-        public override IDataBall CreateDataBall(int x, int y, int r, int m, int vX, int vY)
+        public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY)
         {
             return new FakeDataBall();
         }

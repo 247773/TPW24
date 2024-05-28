@@ -44,7 +44,7 @@ namespace Data
         private Object _positionLocker = new Object();
         private Object _velocityLocker = new Object();
 
-        public DataBall(int x, int y, int r, int m, int vX, int vY)
+        public DataBall(float x, float y, int r, int m, float vX, float vY)
         {
             _position = new Vector2(x, y);
             _velocity = new Vector2(vX, vY);
@@ -54,20 +54,20 @@ namespace Data
 
         private async void StartSimulation()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            int movementTime = 10;
+            Stopwatch stopwatch = new();
+            stopwatch.Start();
+            float startTime = 0f;
             while (_continueMoving)
             {
-                stopwatch.Start();
-                MoveBall();
-                stopwatch.Stop();
-                if (movementTime > (int)stopwatch.ElapsedMilliseconds)
+                float currentTime = stopwatch.ElapsedMilliseconds;
+                float elapsedTime = currentTime - startTime;
+                if (elapsedTime >= 1f / 60f)
                 {
-                    await Task.Delay(movementTime - (int)stopwatch.ElapsedMilliseconds);
+                    MoveBall();
+                    startTime = currentTime;
+                    await Task.Delay((int)elapsedTime / 1000);
                 }
-                stopwatch.Reset();
-            }   
-
+            }
         }
 
         private void MoveBall()

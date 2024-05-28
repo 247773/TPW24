@@ -10,7 +10,7 @@ namespace Data
 
         public abstract event EventHandler<DataEventArgs> ChangedPosition;
 
-        public static IDataBall CreateDataBall(int x, int y, int r, int m, int vX, int vY)
+        public static IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY)
         {
             return new DataBall(x, y, r, m, vX, vY);
         }
