@@ -36,13 +36,13 @@ namespace Logic
                 float vX;
                 do
                 {
-                    vX = (float)random.NextDouble() / 4;
+                    vX = (float)random.NextDouble() / 3;
                 } while (vX == 0);
 
                 float vY;
                 do
                 {
-                    vY = (float)random.NextDouble() / 4;
+                    vY = (float)random.NextDouble() / 3;
                 } while (vY == 0);
 
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
