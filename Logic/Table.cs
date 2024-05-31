@@ -27,7 +27,7 @@ namespace Logic
         {
             _ballRadius = r;
             Random random = new Random();
-            for (int i = 0; i < n; i++)
+            for (int id = 0; id < n; id++)
             {
                 int x = random.Next(r, _length - r);
                 int y = random.Next(r, _width - r);
@@ -45,7 +45,7 @@ namespace Logic
                     vY = (float)random.NextDouble() / 3;
                 } while (vY == 0);
 
-                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY);
+                IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY, id);
                 LogicBall ball = new LogicBall(dataBall.Position.X, dataBall.Position.Y);
 
                 dataBall.ChangedPosition += ball.UpdateBall;

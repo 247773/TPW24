@@ -11,7 +11,7 @@
         public abstract int Width { get; } // krotsza krawedz stolu
 
         public abstract List<IDataBall> GetBalls();
-        public abstract IDataBall CreateDataBall(float x, float y, int r, int m, float vX , float vY);
+        public abstract IDataBall CreateDataBall(float x, float y, int r, int m, float vX , float vY, int id);
         public abstract void ClearTable();
 
     }

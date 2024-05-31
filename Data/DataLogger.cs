@@ -15,8 +15,9 @@ namespace Data
 
         internal DataLogger()
         {
-            string PathToSave = Path.GetTempPath();
-            _pathToFile = Path.Combine(PathToSave, "log.json");
+            string path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            string loggersDirectory = Path.Combine(path, "Loggers");
+            _pathToFile = Path.Combine(loggersDirectory, "DataBallLog.json");
             _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
 
             if (File.Exists(_pathToFile))

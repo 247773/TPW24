@@ -6,13 +6,14 @@ namespace Data
     {
         public abstract Vector2 Position { get; }
         public abstract Vector2 Velocity { get; set; }
+        public abstract int ID { get; }
         public abstract void Dispose();
 
         public abstract event EventHandler<DataEventArgs> ChangedPosition;
 
-        public static IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY)
+        public static IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY, DataLoggerAPI logger, int id)
         {
-            return new DataBall(x, y, r, m, vX, vY);
+            return new DataBall(x, y, r, m, vX, vY, logger, id);
         }
     }
 }

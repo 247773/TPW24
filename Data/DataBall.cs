@@ -38,18 +38,23 @@ namespace Data
             }
         }
 
+        public override int ID { get; }
+
+        private DataLoggerAPI _logger;
         private bool _continueMoving;
 
         private Object _locker = new Object();
         private Object _positionLocker = new Object();
         private Object _velocityLocker = new Object();
 
-        public DataBall(float x, float y, int r, int m, float vX, float vY)
+        public DataBall(float x, float y, int r, int m, float vX, float vY, DataLoggerAPI logger, int iD)
         {
             _position = new Vector2(x, y);
             _velocity = new Vector2(vX, vY);
             _continueMoving = true;
             Task.Run(StartSimulation);
+            ID = iD;
+            _logger = logger;
         }
 
         private async void StartSimulation()
@@ -65,6 +70,7 @@ namespace Data
                 {
                     MoveBall();
                     startTime = currentTime;
+                    _logger.AddBall(this);
                     await Task.Delay((int)elapsedTime / 1000);
                 }
             }
