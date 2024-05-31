@@ -12,6 +12,7 @@
         {
             Length = length;
             Width = width;
+            _logger.AddTable(this);
         }
 
         public override List<IDataBall> GetBalls()
