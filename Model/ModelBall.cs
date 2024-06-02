@@ -28,7 +28,6 @@ namespace Model
 
         public override void UpdateModelBall(Object s, LogicEventArgs e)
         {
-            ILogicBall ball = (ILogicBall)s;
             _x = (int) e.ballPosition.X;
             RaisePropertyChanged("PositionX");
             _y = (int) e.ballPosition.Y;

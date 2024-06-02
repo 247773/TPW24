@@ -14,7 +14,7 @@ namespace Model
         public abstract int PositionY { get; }
         public abstract int Radius { get; }
 
-        public abstract void UpdateModelBall(Object o, LogicEventArgs e);
+        public abstract void UpdateModelBall(Object s, LogicEventArgs e);
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
     }
