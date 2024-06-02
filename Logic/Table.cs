@@ -49,12 +49,20 @@ namespace Logic
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY, id);
                 LogicBall ball = new LogicBall(dataBall.Position.X, dataBall.Position.Y);
 
-                dataBall.ChangedPosition += ball.UpdateBall;
-                dataBall.ChangedPosition += CheckCollisionWithWall;
-                dataBall.ChangedPosition += CheckBallsCollision;
+                MultiCheck(ball, dataBall);
 
                 Balls.Add(ball);
             }
+        }
+
+        private void MultiCheck(LogicBall ball, IDataBall dataBall)
+        {
+            dataBall.ChangedPosition += ball.UpdateBall;
+            dataBall.ChangedPosition += (s, e) =>
+            {
+                CheckCollisionWithWall(s, e);
+                CheckBallsCollision(s, e);
+            };
         }
 
         private void CheckCollisionWithWall(Object s, DataEventArgs e)
