@@ -9,7 +9,36 @@ namespace Data
 
         private Vector2 _position;
         private Vector2 _velocity;
-        public override Vector2 Position
+        public override BallPosition Position
+        {
+            get
+            {
+                lock (_positionLocker)
+                {
+                    return new BallPosition(_position.X, _position.Y);
+                }
+            }
+        }
+
+        public override BallVelocity Velocity
+        {
+            get
+            {
+                lock (_velocityLocker)
+                {
+                    return new BallVelocity(_velocity.X, _velocity.Y);
+                }
+            }
+            set
+            {
+                lock (_velocityLocker)
+                {
+                    _velocity = new Vector2(value.X, value.Y);
+                }
+            }
+        }
+
+        /*public override Vector2 Position
         {
             get
             {
@@ -36,7 +65,7 @@ namespace Data
                     _velocity = value;
                 }
             }
-        }
+        }*/
 
         public override int ID { get; }
 
@@ -80,7 +109,7 @@ namespace Data
         {
             lock (_locker)
             {
-                _position += Velocity;
+                _position += _velocity;
                 ChangedPosition?.Invoke(this, new DataEventArgs(this));
             }
         }

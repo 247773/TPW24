@@ -1,5 +1,6 @@
 using Data;
 using System.Numerics;
+using static Data.IDataBall;
 
 namespace Logic
 {
@@ -61,11 +62,11 @@ namespace Logic
             IDataBall ball = (IDataBall)s;
             if (ball.Position.X + ball.Velocity.X + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X - _ballRadius < 0)
             {
-                ball.Velocity = new Vector2(-ball.Velocity.X, ball.Velocity.Y);
+                ball.Velocity = new BallVelocity(-ball.Velocity.X, ball.Velocity.Y);
             }
             if (ball.Position.Y + ball.Velocity.Y + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y - _ballRadius < 0)
             {
-                ball.Velocity = new Vector2(ball.Velocity.X, -ball.Velocity.Y);
+                ball.Velocity = new BallVelocity(ball.Velocity.X, -ball.Velocity.Y);
             }
         }
 
@@ -100,8 +101,8 @@ namespace Logic
                 float ballYMovement = (2f * weight * otherBall.Velocity.Y) / (2f * weight);
 
 
-                ball.Velocity = new Vector2(ballXMovement, ballYMovement);
-                otherBall.Velocity = new Vector2(otherBallXMovement, otherBallYMovement);
+                ball.Velocity = new BallVelocity(ballXMovement, ballYMovement);
+                otherBall.Velocity = new BallVelocity(otherBallXMovement, otherBallYMovement);
             }
         }
 

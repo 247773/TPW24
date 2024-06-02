@@ -19,7 +19,7 @@ namespace Logic
         public void UpdateBall(Object s, DataEventArgs e)
         {
             IDataBall ball = (IDataBall)s;
-            _position = ball.Position;
+            _position = new Vector2(ball.Position.X, ball.Position.Y);
             ChangedPosition?.Invoke(this, new LogicEventArgs(this));
         }
     }
