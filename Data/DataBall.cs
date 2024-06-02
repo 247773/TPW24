@@ -40,26 +40,26 @@ namespace Data
 
         public override int ID { get; }
 
-        private DataLoggerAPI _logger;
+        private DataLogger _logger;
         private bool _continueMoving;
 
         private Object _locker = new Object();
         private Object _positionLocker = new Object();
         private Object _velocityLocker = new Object();
 
-        public DataBall(float x, float y, int r, int m, float vX, float vY, DataLoggerAPI logger, int iD)
+        public DataBall(float x, float y, int r, int m, float vX, float vY, DataLogger logger, int id)
         {
             _position = new Vector2(x, y);
             _velocity = new Vector2(vX, vY);
             _continueMoving = true;
             Task.Run(StartSimulation);
-            ID = iD;
+            ID = id;
             _logger = logger;
         }
 
         private async void StartSimulation()
         {
-            Stopwatch stopwatch = new();
+            Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             float startTime = 0f;
             while (_continueMoving)
@@ -69,8 +69,8 @@ namespace Data
                 if (elapsedTime >= 1f / 60f)
                 {
                     MoveBall();
-                    startTime = currentTime;
                     _logger.AddBall(this);
+                    startTime = currentTime;
                     await Task.Delay((int)elapsedTime / 1000);
                 }
             }

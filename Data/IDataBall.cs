@@ -10,10 +10,5 @@ namespace Data
         public abstract void Dispose();
 
         public abstract event EventHandler<DataEventArgs> ChangedPosition;
-
-        public static IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY, DataLoggerAPI logger, int id)
-        {
-            return new DataBall(x, y, r, m, vX, vY, logger, id);
-        }
     }
 }

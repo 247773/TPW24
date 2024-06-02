@@ -2,7 +2,7 @@
 {
     internal class DataTable : IDataTable
     {
-        private DataLoggerAPI _logger = DataLoggerAPI.CreateAPI();
+        private DataLogger _logger = new DataLogger();
         public override int Length { get; }
         public override int Width { get; }
 
@@ -27,7 +27,7 @@
 
         public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY, int id)
         {
-            IDataBall ballData = IDataBall.CreateDataBall(x, y, r, m, vX, vY, _logger, id);
+            IDataBall ballData = new DataBall(x, y, r, m, vX, vY, _logger, id);
             _balls.Add(ballData);
             return ballData;
         }

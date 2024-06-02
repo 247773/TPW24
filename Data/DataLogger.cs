@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Data
 {
-    internal class DataLogger : DataLoggerAPI
+    internal class DataLogger
     {
         private ConcurrentQueue<JObject> _ballsConcurrentQueue;
         private JArray _logArray;
@@ -16,14 +16,21 @@ namespace Data
         internal DataLogger()
         {
             string tempPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
-            string loggersDirectory = Path.Combine(tempPath, "Loggers");
-            _pathToFile = Path.Combine(loggersDirectory, "DataBallLog.json");
+            string loggersDir = Path.Combine(tempPath, "Loggers");
+            _pathToFile = Path.Combine(loggersDir, "logs.json");
             _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
 
             if (File.Exists(_pathToFile))
             {
-                string input = File.ReadAllText(_pathToFile);
-                _logArray = JArray.Parse(input);
+                try
+                {
+                    string input = File.ReadAllText(_pathToFile);
+                    _logArray = JArray.Parse(input);
+                }
+                catch (JsonReaderException)
+                {
+                    _logArray = new JArray();
+                }
             }
             else
             {
@@ -33,7 +40,7 @@ namespace Data
             }
         }
 
-        public override void AddBall(IDataBall ball)
+        public void AddBall(IDataBall ball)
         {
             _queueMutex.WaitOne();
             try
@@ -54,10 +61,10 @@ namespace Data
             }
         }
 
-        public override void AddTable(IDataTable board)
+        public void AddTable(IDataTable table)
         {
             ClearLogFile();
-            JObject log = JObject.FromObject(board);
+            JObject log = JObject.FromObject(table);
             _logArray.Add(log);
             String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
             _writeMutex.WaitOne();
