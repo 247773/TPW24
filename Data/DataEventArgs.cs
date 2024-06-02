@@ -1,11 +1,14 @@
-﻿namespace Data
+﻿using static Data.IDataBall;
+
+namespace Data
 {
     public class DataEventArgs
     {
-        public IDataBall Ball;
-        public DataEventArgs(IDataBall ball)
+        public BallPosition ballPosition;
+
+        public DataEventArgs(BallPosition position)
         {
-            Ball = ball;
+            ballPosition = position;
         }
     }
 }

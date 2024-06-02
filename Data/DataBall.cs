@@ -38,35 +38,6 @@ namespace Data
             }
         }
 
-        /*public override Vector2 Position
-        {
-            get
-            {
-                lock (_positionLocker)
-                {
-                    return _position;
-                }
-            }
-        }
-
-        public override Vector2 Velocity
-        {
-            get
-            {
-                lock (_velocityLocker)
-                {
-                    return _velocity;
-                }
-            }
-            set
-            {
-                lock (_velocityLocker)
-                {
-                    _velocity = value;
-                }
-            }
-        }*/
-
         public override int ID { get; }
 
         private DataLogger _logger;
@@ -110,7 +81,7 @@ namespace Data
             lock (_locker)
             {
                 _position += _velocity;
-                ChangedPosition?.Invoke(this, new DataEventArgs(this));
+                ChangedPosition?.Invoke(this, new DataEventArgs(this.Position));
             }
         }
 
