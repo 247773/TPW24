@@ -1,11 +1,13 @@
-﻿namespace Logic
+﻿using System.Numerics;
+
+namespace Logic
 {
     public class LogicEventArgs
     {
-        public ILogicBall Ball;
-        public LogicEventArgs(ILogicBall ball)
+        public Vector2 ballPosition;
+        public LogicEventArgs(Vector2 position)
         {
-            Ball = ball;
+            ballPosition = position;
         }
     }
 }
