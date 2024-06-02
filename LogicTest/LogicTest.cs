@@ -1,15 +1,17 @@
 using Data;
 using Logic;
-using System.Numerics;
 
 namespace LogicTest
 {
     internal class FakeDataBall : IDataBall
     {
-        private Vector2 _position;
-        public override Vector2 Position { get => _position; }
+        private BallPosition _position = new BallPosition(0, 0);
+        public override BallPosition Position { get => _position; }
 
-        public override Vector2 Velocity { get; set; }
+        private BallVelocity _velocity = new BallVelocity(0, 0);
+        public override BallVelocity Velocity { get => _velocity; set => _velocity = value; }
+
+        public override int ID { get; }
 
         public override event EventHandler<DataEventArgs> ChangedPosition;
 
@@ -31,7 +33,7 @@ namespace LogicTest
 
         public override int Width { get; }
 
-        public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY)
+        public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY, int id)
         {
             return new FakeDataBall();
         }
