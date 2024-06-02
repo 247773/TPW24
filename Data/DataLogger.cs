@@ -6,32 +6,44 @@ namespace Data
 {
     internal class DataLogger
     {
-        private ConcurrentQueue<JObject> _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
+        private ConcurrentQueue<JObject> _ballsConcurrentQueue;
         private JArray _logArray;
         private string _pathToFile;
-        private object _writeLock = new object();
-        private object _queueLock = new object();
+        private Mutex _writeMutex = new Mutex();
+        private Mutex _queueMutex = new Mutex();
         private Task _logerTask;
 
         internal DataLogger()
         {
-            _pathToFile = Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "Loggers", "logs.json");
+            string tempPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            string loggersDir = Path.Combine(tempPath, "Loggers");
+            _pathToFile = Path.Combine(loggersDir, "logs.json");
+            _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
 
             if (File.Exists(_pathToFile))
             {
-                string input = File.ReadAllText(_pathToFile);
-                _logArray = JArray.Parse(input);
+                try
+                {
+                    string input = File.ReadAllText(_pathToFile);
+                    _logArray = JArray.Parse(input);
+                }
+                catch (JsonReaderException)
+                {
+                    _logArray = new JArray();
+                }
             }
             else
             {
                 _logArray = new JArray();
-                File.Create(_pathToFile).Close();
+                FileStream file = File.Create(_pathToFile);
+                file.Close();
             }
         }
 
         public void AddBall(IDataBall ball)
         {
-            lock (_queueLock)
+            _queueMutex.WaitOne();
+            try
             {
                 JObject log = JObject.FromObject(ball.Position);
                 log["Time: "] = DateTime.Now.ToString("HH:mm:ss");
@@ -43,6 +55,10 @@ namespace Data
                     _logerTask = Task.Run(SaveDataToLog);
                 }
             }
+            finally
+            {
+                _queueMutex.ReleaseMutex();
+            }
         }
 
         public void AddTable(IDataTable table)
@@ -50,7 +66,16 @@ namespace Data
             ClearLogFile();
             JObject log = JObject.FromObject(table);
             _logArray.Add(log);
-            SaveDataToLog();
+            String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+            _writeMutex.WaitOne();
+            try
+            {
+                File.WriteAllText(_pathToFile, diagnosticData);
+            }
+            finally
+            {
+                _writeMutex.ReleaseMutex();
+            }
         }
 
         private void SaveDataToLog()
@@ -59,18 +84,28 @@ namespace Data
             {
                 _logArray.Add(ball);
             }
-            lock (_writeLock)
+            String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+            try
             {
-                File.WriteAllText(_pathToFile, JsonConvert.SerializeObject(_logArray, Formatting.Indented));
+                File.WriteAllText(_pathToFile, diagnosticData);
+            }
+            finally
+            {
+                _writeMutex.ReleaseMutex();
             }
         }
 
         private void ClearLogFile()
         {
-            lock (_writeLock)
+            _writeMutex.WaitOne();
+            try
             {
                 _logArray.Clear();
                 File.WriteAllText(_pathToFile, string.Empty);
+            }
+            finally
+            {
+                _writeMutex.ReleaseMutex();
             }
         }
     }
