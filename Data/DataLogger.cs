@@ -11,11 +11,12 @@ namespace Data
         private string _pathToFile;
         private Mutex _writeMutex = new Mutex();
         private Mutex _queueMutex = new Mutex();
+        private readonly int queueSize = 23;
         private Task _logerTask;
 
         private static DataLogger? _dataLogger = null;
 
-        public static DataLogger getDataLogger()
+        public static DataLogger getInstance()
         {
             _dataLogger ??= new DataLogger();
             return _dataLogger;
@@ -53,14 +54,25 @@ namespace Data
             _queueMutex.WaitOne();
             try
             {
-                JObject log = JObject.FromObject(ball.Position);
-                log["Time: "] = DateTime.Now.ToString("HH:mm:ss");
-                log.Add("Ball ID", ball.ID);
 
-                _ballsConcurrentQueue.Enqueue(log);
-                if (_logerTask == null || _logerTask.IsCompleted)
+                if (_ballsConcurrentQueue.Count < queueSize)
                 {
-                    _logerTask = Task.Run(SaveDataToLog);
+                    JObject log = JObject.FromObject(ball.Position);
+                    log["Time: "] = DateTime.Now.ToString("HH:mm:ss");
+                    log.Add("Ball ID", ball.ID);
+
+                    _ballsConcurrentQueue.Enqueue(log);
+                    if (_logerTask == null || _logerTask.IsCompleted)
+                    {
+                        _logerTask = Task.Run(SaveDataToLog);
+                    }
+                }
+                else
+                {
+                    JObject overflowLog = new JObject();
+                    overflowLog["Message"] = "Queue overflow - ball not added";
+                    overflowLog["Time"] = DateTime.Now.ToString("HH:mm:ss");
+                    _logArray.Add(overflowLog);
                 }
             }
             finally
@@ -93,9 +105,11 @@ namespace Data
                 _logArray.Add(ball);
             }
             String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+            
+            _writeMutex.WaitOne(); 
             try
             {
-                File.WriteAllText(_pathToFile, diagnosticData);
+                File.WriteAllText(_pathToFile, diagnosticData, System.Text.Encoding.UTF8);
             }
             finally
             {
@@ -109,7 +123,7 @@ namespace Data
             try
             {
                 _logArray.Clear();
-                File.WriteAllText(_pathToFile, string.Empty);
+                File.WriteAllText(_pathToFile, string.Empty, System.Text.Encoding.UTF8);
             }
             finally
             {
