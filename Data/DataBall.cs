@@ -5,6 +5,8 @@ namespace Data
 {
     internal class DataBall : IDataBall, IDisposable
     {
+        private readonly DataLogger _logger = DataLogger.getInstance();
+
         public override event EventHandler<DataEventArgs>? ChangedPosition;
 
         private Vector2 _position;
@@ -40,21 +42,19 @@ namespace Data
 
         public override int ID { get; }
 
-        private DataLogger _logger;
         private bool _continueMoving;
 
         private Object _locker = new Object();
         private Object _positionLocker = new Object();
         private Object _velocityLocker = new Object();
 
-        public DataBall(float x, float y, int r, int m, float vX, float vY, DataLogger logger, int id)
+        public DataBall(float x, float y, int r, int m, float vX, float vY, int id)
         {
             _position = new Vector2(x, y);
             _velocity = new Vector2(vX, vY);
             _continueMoving = true;
             Task.Run(StartSimulation);
             ID = id;
-            _logger = logger;
         }
 
         private async void StartSimulation()

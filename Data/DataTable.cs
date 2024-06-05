@@ -2,7 +2,6 @@
 {
     internal class DataTable : IDataTable
     {
-        private DataLogger _logger = new DataLogger();
         public override int Length { get; }
         public override int Width { get; }
 
@@ -12,7 +11,6 @@
         {
             Length = length;
             Width = width;
-            _logger.AddTable(this);
         }
 
         public override List<IDataBall> GetBalls()
@@ -27,7 +25,7 @@
 
         public override IDataBall CreateDataBall(float x, float y, int r, int m, float vX, float vY, int id)
         {
-            IDataBall ballData = new DataBall(x, y, r, m, vX, vY, _logger, id);
+            IDataBall ballData = new DataBall(x, y, r, m, vX, vY, id);
             _balls.Add(ballData);
             return ballData;
         }
