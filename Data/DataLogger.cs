@@ -13,7 +13,15 @@ namespace Data
         private Mutex _queueMutex = new Mutex();
         private Task _logerTask;
 
-        internal DataLogger()
+        private static DataLogger? _dataLogger = null;
+
+        public static DataLogger getDataLogger()
+        {
+            _dataLogger ??= new DataLogger();
+            return _dataLogger;
+        }
+
+        private DataLogger()
         {
             string tempPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
             string loggersDir = Path.Combine(tempPath, "Loggers");
