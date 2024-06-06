@@ -11,6 +11,7 @@ namespace Data
 
         private Vector2 _position;
         private Vector2 _velocity;
+
         public override BallPosition Position
         {
             get
@@ -69,7 +70,7 @@ namespace Data
                 if (elapsedTime >= 1f / 60f)
                 {
                     MoveBall();
-                    _logger.AddBall(this);
+                    _logger.AddBall(new LogBall(Position, Velocity, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), ID));
                     startTime = currentTime;
                     await Task.Delay((int)elapsedTime / 1000);
                 }
