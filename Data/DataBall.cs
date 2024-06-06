@@ -11,6 +11,7 @@ namespace Data
 
         private Vector2 _position;
         private Vector2 _velocity;
+        private const float TIME_INTERVAL = 1f / 60f; // 60 FPS
 
         public override BallPosition Position
         {
@@ -62,26 +63,26 @@ namespace Data
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            float startTime = 0f;
+            long previousTime = stopwatch.ElapsedMilliseconds;
             while (_continueMoving)
             {
-                float currentTime = stopwatch.ElapsedMilliseconds;
-                float elapsedTime = currentTime - startTime;
-                if (elapsedTime >= 1f / 60f)
+                long currentTime = stopwatch.ElapsedMilliseconds;
+                float elapsedTime = (currentTime - previousTime);
+                if (elapsedTime >= TIME_INTERVAL)
                 {
-                    MoveBall();
+                    MoveBall(elapsedTime);
                     _logger.AddBall(new LogBall(Position, Velocity, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), ID));
-                    startTime = currentTime;
-                    await Task.Delay((int)elapsedTime / 1000);
+                    previousTime = currentTime;
                 }
+                await Task.Delay(TimeSpan.FromSeconds(TIME_INTERVAL));
             }
         }
 
-        private void MoveBall()
+        private void MoveBall(float elapsedTime)
         {
             lock (_locker)
             {
-                _position += _velocity;
+                _position += (_velocity * elapsedTime);
                 ChangedPosition?.Invoke(this, new DataEventArgs(this.Position));
             }
         }

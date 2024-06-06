@@ -11,7 +11,7 @@ namespace Data
         private string _pathToFile;
         private Mutex _writeMutex = new Mutex();
         private Mutex _queueMutex = new Mutex();
-        private readonly int queueSize = 23;
+        private readonly int queueSize = 10000;
         private Task _logerTask;
 
         private static DataLogger? _dataLogger = null;
@@ -49,7 +49,7 @@ namespace Data
             }
         }
 
-        public void AddBall(IDataBall ball)
+        public void AddBall(LogBall ball)
         {
             _queueMutex.WaitOne();
             try
