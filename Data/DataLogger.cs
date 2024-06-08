@@ -9,9 +9,9 @@ namespace Data
         private ConcurrentQueue<JObject> _ballsConcurrentQueue;
         private JArray _logArray;
         private string _pathToFile;
-        private Mutex _writeMutex = new Mutex();
-        private Mutex _queueMutex = new Mutex();
-        private readonly int queueSize = 10000;
+        private readonly object _writeLock = new object();
+        private readonly object _queueLock = new object();
+        private readonly int queueSize = 100;
         private Task _logerTask;
 
         private static DataLogger? _dataLogger = null;
@@ -24,7 +24,7 @@ namespace Data
 
         private DataLogger()
         {
-            string tempPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            string tempPath = Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.Parent?.FullName ?? string.Empty;
             string loggersDir = Path.Combine(tempPath, "Loggers");
             _pathToFile = Path.Combine(loggersDir, "logs.json");
             _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
@@ -33,7 +33,7 @@ namespace Data
             {
                 try
                 {
-                    string input = File.ReadAllText(_pathToFile);
+                   string input = File.ReadAllText(_pathToFile);
                     _logArray = JArray.Parse(input);
                 }
                 catch (JsonReaderException)
@@ -44,22 +44,23 @@ namespace Data
             else
             {
                 _logArray = new JArray();
-                FileStream file = File.Create(_pathToFile);
-                file.Close();
+                Directory.CreateDirectory(loggersDir);
+                File.Create(_pathToFile).Dispose();
             }
         }
 
         public void AddBall(LogBall ball)
         {
-            _queueMutex.WaitOne();
-            try
+            lock (_queueLock)
             {
-
                 if (_ballsConcurrentQueue.Count < queueSize)
                 {
-                    JObject log = JObject.FromObject(ball.Position);
-                    log["Time: "] = DateTime.Now.ToString("HH:mm:ss");
-                    log.Add("Ball ID", ball.ID);
+                    JObject log = new JObject
+                    {
+                        ["Position"] = JObject.FromObject(ball.Position),
+                        ["Time"] = ball.Time.ToString("o"),
+                        ["Ball ID"] = ball.ID
+                    };
 
                     _ballsConcurrentQueue.Enqueue(log);
                     if (_logerTask == null || _logerTask.IsCompleted)
@@ -69,15 +70,13 @@ namespace Data
                 }
                 else
                 {
-                    JObject overflowLog = new JObject();
-                    overflowLog["Message"] = "Queue overflow - ball not added";
-                    overflowLog["Time"] = DateTime.Now.ToString("HH:mm:ss");
+                    JObject overflowLog = new JObject
+                    {
+                        ["Message"] = "Queue overflow - ball not added",
+                        ["Time"] = DateTime.Now.ToString("o")
+                    };
                     _logArray.Add(overflowLog);
                 }
-            }
-            finally
-            {
-                _queueMutex.ReleaseMutex();
             }
         }
 
@@ -86,15 +85,10 @@ namespace Data
             ClearLogFile();
             JObject log = JObject.FromObject(table);
             _logArray.Add(log);
-            String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
-            _writeMutex.WaitOne();
-            try
+            string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+            lock (_writeLock)
             {
                 File.WriteAllText(_pathToFile, diagnosticData);
-            }
-            finally
-            {
-                _writeMutex.ReleaseMutex();
             }
         }
 
@@ -104,30 +98,20 @@ namespace Data
             {
                 _logArray.Add(ball);
             }
-            String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
-            
-            _writeMutex.WaitOne(); 
-            try
+            string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+
+            lock (_writeLock)
             {
-                File.WriteAllText(_pathToFile, diagnosticData, System.Text.Encoding.UTF8);
-            }
-            finally
-            {
-                _writeMutex.ReleaseMutex();
+                File.WriteAllText(_pathToFile, diagnosticData);
             }
         }
 
         private void ClearLogFile()
         {
-            _writeMutex.WaitOne();
-            try
+            lock (_writeLock)
             {
                 _logArray.Clear();
-                File.WriteAllText(_pathToFile, string.Empty, System.Text.Encoding.UTF8);
-            }
-            finally
-            {
-                _writeMutex.ReleaseMutex();
+                File.WriteAllText(_pathToFile, string.Empty);
             }
         }
     }

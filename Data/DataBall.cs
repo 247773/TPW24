@@ -79,7 +79,7 @@ namespace Data
                 {
                     Time = elapsedTime;
                     MoveBall(elapsedTime);
-                    _logger.AddBall(new LogBall(Position, Velocity, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), ID));
+                    _logger.AddBall(new LogBall(Position, Velocity, DateTime.Now, ID));
                     previousTime = currentTime;
                 }
                 await Task.Delay(TimeSpan.FromSeconds(TIME_INTERVAL));

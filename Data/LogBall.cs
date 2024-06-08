@@ -8,8 +8,8 @@ namespace Data
         public int ID;
         public BallPosition Position;
         public BallVelocity Velocity;
-        public long Time;
-        public LogBall(BallPosition p, BallVelocity v, long t, int id)
+        public DateTime Time;
+        public LogBall(BallPosition p, BallVelocity v, DateTime t, int id)
         {
             Position = p;
             Velocity = v;
