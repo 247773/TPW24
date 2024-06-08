@@ -12,7 +12,7 @@ namespace LogicTest
         public override BallVelocity Velocity { get => _velocity; set => _velocity = value; }
 
         public override int ID { get; }
-
+        public override float Time { get; set; }
         public override event EventHandler<DataEventArgs> ChangedPosition;
 
         public override void Dispose()
