@@ -1,4 +1,5 @@
 using Data;
+using System.Diagnostics;
 using System.Numerics;
 using static Data.IDataBall;
 
@@ -48,7 +49,7 @@ namespace Logic
 
                 IDataBall dataBall = dataAPI.CreateDataBall(x, y, _ballRadius, m, vX, vY, id);
                 LogicBall ball = new LogicBall(dataBall.Position.X, dataBall.Position.Y);
-
+                
                 MultiCheck(ball, dataBall);
 
                 Balls.Add(ball);
@@ -68,11 +69,11 @@ namespace Logic
         private void CheckCollisionWithWall(Object s, DataEventArgs e)
         {
             IDataBall ball = (IDataBall)s;
-            if (ball.Position.X + ball.Velocity.X + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X - _ballRadius < 0)
+            if (ball.Position.X + ball.Velocity.X * ball.Time + _ballRadius > dataAPI.Length || ball.Position.X + ball.Velocity.X * ball.Time - _ballRadius < 0)
             {
                 ball.Velocity = new BallVelocity(-ball.Velocity.X, ball.Velocity.Y);
             }
-            if (ball.Position.Y + ball.Velocity.Y + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y - _ballRadius < 0)
+            if (ball.Position.Y + ball.Velocity.Y * ball.Time + _ballRadius > dataAPI.Width || ball.Position.Y + ball.Velocity.Y * ball.Time - _ballRadius < 0)
             {
                 ball.Velocity = new BallVelocity(ball.Velocity.X, -ball.Velocity.Y);
             }
@@ -98,7 +99,7 @@ namespace Logic
 
         private void BallCollision(IDataBall ball, IDataBall otherBall)
         {
-            if (Math.Sqrt(Math.Pow(ball.Position.X + ball.Velocity.X - otherBall.Position.X - otherBall.Velocity.X, 2) + Math.Pow(ball.Position.Y + ball.Velocity.Y - otherBall.Position.Y - otherBall.Velocity.Y, 2)) <= _ballRadius / 2 + _ballRadius / 2)
+            if (Math.Sqrt(Math.Pow(ball.Position.X + ball.Velocity.X * ball.Time - otherBall.Position.X - otherBall.Velocity.X * ball.Time, 2) + Math.Pow(ball.Position.Y + ball.Velocity.Y * ball.Time - otherBall.Position.Y - otherBall.Velocity.Y * ball.Time, 2)) <= _ballRadius / 2 + _ballRadius / 2)
             {
                 float weight = 1f;
 
