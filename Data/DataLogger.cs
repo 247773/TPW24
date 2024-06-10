@@ -1,18 +1,19 @@
 ﻿using System.Collections.Concurrent;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Data
 {
     internal class DataLogger
     {
-        private ConcurrentQueue<JObject> _ballsConcurrentQueue;
+        private ConcurrentQueue<LogBall> _ballsConcurrentQueue;
         private JArray _logArray;
         private string _pathToFile;
         private readonly object _writeLock = new object();
         private readonly object _queueLock = new object();
-        private readonly int queueSize = 100;
-        private Task _logerTask;
+        private readonly int _queueSize = 100;
+        private bool queueOverflow;
 
         private static DataLogger? _dataLogger = null;
 
@@ -27,7 +28,8 @@ namespace Data
             string tempPath = Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.Parent?.FullName ?? string.Empty;
             string loggersDir = Path.Combine(tempPath, "Loggers");
             _pathToFile = Path.Combine(loggersDir, "logs.json");
-            _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
+            _ballsConcurrentQueue = new ConcurrentQueue<LogBall>();
+            queueOverflow = false;
 
             if (File.Exists(_pathToFile))
             {
@@ -47,71 +49,77 @@ namespace Data
                 Directory.CreateDirectory(loggersDir);
                 File.Create(_pathToFile).Dispose();
             }
+
+            Task.Run(CollectData);
         }
 
-        public void AddBall(LogBall ball)
+        public void AddBall(LogBall logBall)
         {
             lock (_queueLock)
             {
-                if (_ballsConcurrentQueue.Count < queueSize)
+                if (_ballsConcurrentQueue.Count < _queueSize)
                 {
-                    JObject log = new JObject
-                    {
-                        ["Position"] = JObject.FromObject(ball.Position),
-                        ["Time"] = ball.Time.ToString("o"),
-                        ["Ball ID"] = ball.ID
-                    };
-
-                    _ballsConcurrentQueue.Enqueue(log);
-                    if (_logerTask == null || _logerTask.IsCompleted)
-                    {
-                        _logerTask = Task.Run(SaveDataToLog);
-                    }
+                    _ballsConcurrentQueue.Enqueue(logBall);
                 }
                 else
                 {
-                    JObject overflowLog = new JObject
-                    {
-                        ["Message"] = "Queue overflow - ball not added",
-                        ["Time"] = DateTime.Now.ToString("o")
-                    };
-                    _logArray.Add(overflowLog);
+                    queueOverflow = true;
                 }
             }
         }
 
-        public void AddTable(IDataTable table)
+        private void CollectData()
         {
-            ClearLogFile();
-            JObject log = JObject.FromObject(table);
-            _logArray.Add(log);
-            string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
-            lock (_writeLock)
+            while (true)
             {
-                File.WriteAllText(_pathToFile, diagnosticData);
+                if (!_ballsConcurrentQueue.IsEmpty)
+                {
+                    while (_ballsConcurrentQueue.TryDequeue(out LogBall logBall))
+                    {
+                        JObject log = new JObject
+                        {
+                            ["Position"] = JObject.FromObject(logBall.Position),
+                            ["Time"] = logBall.Time.ToString("o"),
+                            ["Ball ID"] = logBall.ID
+                        };
+
+                        _logArray.Add(log);
+
+                        if (queueOverflow)
+                        {
+                            JObject errorMessage = new JObject
+                            {
+                                ["Error"] = "Queue overflow - ball not added",
+                                ["Time"] = DateTime.Now.ToString("o")
+                            };
+                            
+                            _logArray.Add(errorMessage);
+                            
+                            lock (_queueLock)
+                            {
+                                queueOverflow = false;
+                            }
+                        }
+                    }
+
+                    if (_logArray.Count > _queueSize / 2)
+                    {
+                        SaveData();
+                    }
+
+                    // tu coś powinno być?
+
+                }
             }
         }
 
-        private void SaveDataToLog()
+        private void SaveData()
         {
-            while (_ballsConcurrentQueue.TryDequeue(out JObject ball))
-            {
-                _logArray.Add(ball);
-            }
             string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
 
             lock (_writeLock)
             {
-                File.WriteAllText(_pathToFile, diagnosticData);
-            }
-        }
-
-        private void ClearLogFile()
-        {
-            lock (_writeLock)
-            {
-                _logArray.Clear();
-                File.WriteAllText(_pathToFile, string.Empty);
+                File.WriteAllText(_pathToFile, diagnosticData, Encoding.UTF8);
             }
         }
     }
