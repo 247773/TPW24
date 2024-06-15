@@ -12,7 +12,7 @@ namespace Data
         private Vector2 _position;
         private Vector2 _velocity;
         private float _elapsedTime;
-        private const float TIME_INTERVAL = 1f / 60f; // 60 FPS
+        private const float TIME_INTERVAL = 1f / 60f;
 
         public override BallPosition Position
         {
@@ -79,7 +79,7 @@ namespace Data
                 {
                     Time = elapsedTime;
                     MoveBall(elapsedTime);
-                    _logger.AddBall(new LogBall(Position, Velocity, DateTime.Now, ID));
+                    _logger.AddBall(new LogBall(Position, Velocity, DateTime.UtcNow.ToLocalTime(), ID));
                     previousTime = currentTime;
                 }
                 await Task.Delay(TimeSpan.FromSeconds(TIME_INTERVAL));
